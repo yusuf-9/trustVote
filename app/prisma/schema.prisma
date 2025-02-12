@@ -8,6 +8,48 @@ generator client {
 }
 
 model User {
-  id    Int    @id @default(autoincrement())
-  email String @unique
+  id           String       @id @default(uuid())
+  name         String
+  email        String       @unique
+  passwordHash String? // Nullable for OAuth users
+  avatarUrl    String?
+  verified     Boolean      @default(false)
+  authProvider AuthProvider
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  otp          Otp?
+  accessToken  AccessToken? // Fixed casing to match Prisma conventions
+
+  @@index([authProvider]) // Optimize queries for OAuth users
+}
+
+model Otp {
+  id        String   @id @default(uuid())
+  otp       String
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId]) // Optimize queries for userId
+}
+
+model AccessToken {
+  id        String          @id @default(uuid())
+  token     String          @unique
+  userId    String          @unique
+  type      AccessTokenType
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum AuthProvider {
+  LOCAL
+  GOOGLE
+}
+
+enum AccessTokenType {
+  PASSWORD_RESET
 }

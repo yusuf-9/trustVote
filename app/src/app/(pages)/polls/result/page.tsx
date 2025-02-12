@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
+import { Button } from "@/client/common/components/ui/button"
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/client/common/components/ui/card"
+import { Progress } from "@/client/common/components/ui/progress"
 
 interface PollResult {
   option: string
