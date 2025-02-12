@@ -39,7 +39,7 @@ const OtpForm: React.FC = () => {
         <Button
           type="button"
           disabled={isResendingOtp}
-          className="w-full text-gray-500 h-10 text-base"
+          className="w-full text-text-light h-10 text-base"
           variant={"ghost"}
           onClick={handleResendOtp}
         >
@@ -65,7 +65,7 @@ const OtpForm: React.FC = () => {
           renderInput={props => <input {...props} />}
           containerStyle="flex justify-between max-w-xs mx-auto"
           inputStyle={cn(
-            "h-12 !w-8 sm:!w-10 text-2xl border-2 rounded-md text-center focus:border-[#0F9D58] focus:outline-none",
+            "h-12 !w-8 sm:!w-10 text-2xl border-2 rounded-md text-center focus:border-main focus:outline-none",
             error && "border-red-500"
           )}
         />
@@ -75,14 +75,14 @@ const OtpForm: React.FC = () => {
         <Button
           type="submit"
           disabled={disableSubmit || loading}
-          className="w-full bg-[#0F9D58] hover:bg-[#0B8043] text-white h-10 text-base"
+          className="w-full bg-main hover:bg-main-dark text-white h-10 text-base"
         >
           Verify
         </Button>
         <div className="mt-6 text-center">
           <a
             onClick={() => router.back()}
-            className="text-sm text-[#0F9D58] hover:text-[#0B8043] cursor-pointer"
+            className="text-sm text-main hover:text-main-dark cursor-pointer"
           >
             Go back
           </a>

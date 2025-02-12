@@ -50,8 +50,8 @@ const ForgotPasswordForm = () => {
   if (success) {
     return (
       <div className="mb-6 lg:mb-8 text-center">
-        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">Password Reset Email Sent</h2>
-        <p className="text-xs sm:text-base text-gray-600 mt-1 sm:mt-2">
+        <h2 className="text-2xl sm:text-3xl font-bold text-text">Password Reset Email Sent</h2>
+        <p className="text-xs sm:text-base text-text-light mt-1 sm:mt-2">
           Please check your email for a link to reset your password.
         </p>
       </div>
@@ -61,8 +61,8 @@ const ForgotPasswordForm = () => {
   return (
     <>
       <div className="mb-6 lg:mb-8 text-center">
-        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">Forgot Password</h2>
-        <p className="text-xs sm:text-sm text-gray-600 mt-1 sm:mt-2">Enter your email to reset your password</p>
+        <h2 className="text-2xl sm:text-3xl font-bold text-text">Forgot Password</h2>
+        <p className="text-xs sm:text-sm text-text-light mt-1 sm:mt-2">Enter your email to reset your password</p>
       </div>
       <form
         className="space-y-4 sm:space-y-5"
@@ -71,7 +71,7 @@ const ForgotPasswordForm = () => {
         <div>
           <Label
             htmlFor="email"
-            className="text-xs sm:text-sm font-medium text-gray-700"
+            className="text-xs sm:text-sm font-medium text-text"
           >
             Email address
           </Label>
@@ -95,7 +95,7 @@ const ForgotPasswordForm = () => {
         <Button
           disabled={loading}
           type="submit"
-          className="w-full bg-[#0F9D58] hover:bg-[#0B8043] text-white h-8 sm:h-10 text-sm sm:text-base"
+          className="w-full bg-main hover:bg-main-dark text-white h-8 sm:h-10 text-sm sm:text-base"
         >
           Submit
         </Button>

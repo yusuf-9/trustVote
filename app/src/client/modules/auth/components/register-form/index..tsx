@@ -37,7 +37,7 @@ const RegisterForm: React.FC = () => {
         <div>
           <Label
             htmlFor="name"
-            className="text-xs sm:text-sm font-medium text-gray-700"
+            className="text-xs sm:text-sm font-medium text-text"
           >
             Name
           </Label>
@@ -61,7 +61,7 @@ const RegisterForm: React.FC = () => {
         <div>
           <Label
             htmlFor="email"
-            className="text-xs sm:text-sm font-medium text-gray-700"
+            className="text-xs sm:text-sm font-medium text-text"
           >
             Email address
           </Label>
@@ -85,7 +85,7 @@ const RegisterForm: React.FC = () => {
         <div>
           <Label
             htmlFor="password"
-            className="text-xs sm:text-sm font-medium text-gray-700"
+            className="text-xs sm:text-sm font-medium text-text"
           >
             Password
           </Label>
@@ -109,7 +109,7 @@ const RegisterForm: React.FC = () => {
         <div>
           <Label
             htmlFor="confirmPassword"
-            className="text-xs sm:text-sm font-medium text-gray-700"
+            className="text-xs sm:text-sm font-medium text-text"
           >
             Confirm Password
           </Label>
@@ -139,7 +139,7 @@ const RegisterForm: React.FC = () => {
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-[#0F9D58] hover:bg-[#0B8043] text-white h-8 sm:h-10 text-sm sm:text-base"
+          className="w-full bg-main hover:bg-main-dark text-white h-8 sm:h-10 text-sm sm:text-base"
         >
           Register
         </Button>
@@ -147,10 +147,10 @@ const RegisterForm: React.FC = () => {
       <div className="mt-4 sm:mt-6">
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300"></div>
+            <div className="w-full border-t border-text-lighter"></div>
           </div>
           <div className="relative flex justify-center text-xs sm:text-sm">
-            <span className="px-2 bg-white text-gray-500">Or</span>
+            <span className="px-2 bg-white text-text-light">Or</span>
           </div>
         </div>
         <div className="mt-4 sm:mt-6">

@@ -40,8 +40,8 @@ const PasswordResetForm = () => {
     return (
       <div className="mb-6 lg:mb-8 flex flex-col gap-10 text-center">
         <div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">Sorry, the link is invalid or expired</h2>
-          <p className="text-xs sm:text-base text-gray-600 mt-1 sm:mt-2">
+          <h2 className="text-2xl sm:text-3xl font-bold text-text">Sorry, the link is invalid or expired</h2>
+          <p className="text-xs sm:text-base text-text-light mt-1 sm:mt-2">
             Please request a new password reset link by clicking below
           </p>
         </div>
@@ -59,8 +59,8 @@ const PasswordResetForm = () => {
     return (
       <div className="mb-6 lg:mb-8 flex flex-col gap-10 text-center">
         <div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">Password reset successful</h2>
-          <p className="text-xs sm:text-base text-gray-600 mt-1 sm:mt-2">
+          <h2 className="text-2xl sm:text-3xl font-bold text-text">Password reset successful</h2>
+          <p className="text-xs sm:text-base text-text-light mt-1 sm:mt-2">
             Please login with your new password
           </p>
         </div>
@@ -78,8 +78,8 @@ const PasswordResetForm = () => {
     isLinkValid && (
       <>
         <div className="mb-6 lg:mb-8 text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">Reset Password</h2>
-          <p className="text-xs sm:text-sm text-gray-600 mt-1 sm:mt-2">Enter your new password</p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-text">Reset Password</h2>
+          <p className="text-xs sm:text-sm text-text-light mt-1 sm:mt-2">Enter your new password</p>
         </div>
 
         <form
@@ -89,7 +89,7 @@ const PasswordResetForm = () => {
           <div>
             <Label
               htmlFor="password"
-              className="text-xs sm:text-sm font-medium text-gray-700"
+              className="text-xs sm:text-sm font-medium text-text"
             >
               Password
             </Label>
@@ -113,7 +113,7 @@ const PasswordResetForm = () => {
           <div>
             <Label
               htmlFor="confirmPassword"
-              className="text-xs sm:text-sm font-medium text-gray-700"
+              className="text-xs sm:text-sm font-medium text-text"
             >
               Confirm Password
             </Label>
@@ -143,7 +143,7 @@ const PasswordResetForm = () => {
           <Button
             disabled={isSubmitting}
             type="submit"
-            className="w-full bg-[#0F9D58] hover:bg-[#0B8043] text-white h-8 sm:h-10 text-sm sm:text-base"
+            className="w-full bg-main hover:bg-main-dark text-white h-8 sm:h-10 text-sm sm:text-base"
           >
             Submit
           </Button>
