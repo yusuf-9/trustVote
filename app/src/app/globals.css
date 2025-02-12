@@ -49,20 +49,21 @@ body {
     --main-dark: 270 85% 28%;
     --main-light: 270 85% 91%; */
 
-    /* teal theme */
-    --main: 180 85% 34%;
-    --main-dark: 180 85% 28%;
-    --main-light: 180 85% 91%;
-
+    
     /* coral theme */
     /* --main: 16 85% 34%;
     --main-dark: 16 85% 28%;
     --main-light: 16 85% 91%; */
-
+    
     /* Goldish theme */
     /* --main: 54 85% 34%;
     --main-dark: 54 85% 28%; 
     --main-light: 54 85% 91%; */
+    
+    /* teal theme */
+    --main: 180 85% 34%;
+    --main-dark: 180 85% 28%;
+    --main-light: 180 85% 91%;
 
     /* text colors */
     --text: 0 0% 13%;
