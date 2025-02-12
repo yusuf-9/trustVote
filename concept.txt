@@ -1,0 +1,39 @@
+Functional requirements:
+
+- Users should be able to create polls on the blockchain
+- Poll creators should be able to set the poll config, which includes:
+    - Poll title
+    - Poll description
+    - Poll type (election or poll)
+    - Poll options (candidates or items)
+    - Poll start date
+    - Poll end date
+    - Voters (email addresses)
+    - Poll result visibility (visible before or after the poll end date)
+- Poll creators should be able to view and update the voters (no deletions) 
+- Voters should be able to view the polls
+- Voters should be able to vote for the poll
+- Votes and polls will be created on the blockchain
+
+
+Technical implementation:
+- Create email based authentication
+- Create FE pages for - 
+    - authentication -
+        - registration
+        - login
+    - dashboard (voter dashboard and creator dashboard)
+        - voter dashboard
+        - creator dashboard
+    - poll creation
+    - poll updates
+    - poll voting
+    - poll results
+
+
+--------------------------------------------------------------------------------
+
+Tasks - 
+
+- integrate sqlite DB
+- Add AUTH and secure protected routes
