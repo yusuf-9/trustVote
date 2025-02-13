@@ -35,5 +35,22 @@ Technical implementation:
 
 Tasks - 
 
-- integrate sqlite DB
-- Add AUTH and secure protected routes
+- integrate sqlite DB - done
+- Make auth functional - done
+- Create required protected routes -
+    - polls page - done
+    - poll details page - done
+    - poll creation page - done
+    - voter's polls page - done
+    - poll results page
+    - poll update page
+    - poll voting page
+- deploy app preview on vercel
+- implement logic for poll contract creation (BE)
+- integrate poll creation with contract (BE)
+- integrate polls page to show all polls (BE & FE)
+- implement logic for poll details (BE & FE)
+- implement logic for voter's poll page (BE & FE)
+- implement logic for vote casting (BE & FE)
+- implement logic for poll results (BE & FE)
+- implement logic for poll update (BE & FE)

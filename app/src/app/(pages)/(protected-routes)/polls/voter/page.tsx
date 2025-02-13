@@ -12,7 +12,7 @@ interface Poll {
   endDate: string
 }
 
-export default function PollsPage() {
+export default function VoterPollsPage() {
   const [polls, setPolls] = useState<Poll[]>([])
 
   useEffect(() => {

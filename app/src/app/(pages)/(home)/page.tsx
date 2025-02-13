@@ -28,7 +28,7 @@ export default function Home() {
           <div className="flex justify-between items-center">
             <div className="flex items-center">
               <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-main to-main-dark">
-                BlockVote
+                TrustVote
               </span>
             </div>
 
@@ -215,7 +215,7 @@ export default function Home() {
       <footer className="bg-main-light py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-center text-text-light">
-            &copy; {new Date().getFullYear()} BlockVote. All rights reserved.
+            &copy; {new Date().getFullYear()} TrustVote. All rights reserved.
           </p>
         </div>
       </footer>
