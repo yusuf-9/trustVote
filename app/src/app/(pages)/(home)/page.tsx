@@ -87,22 +87,6 @@ export default function Home() {
         <div className="absolute inset-0 overflow-visible">
           <div className="absolute w-32 h-32 bg-main rounded-full opacity-70 blur-3xl animate-[bounce1_8s_linear_infinite]"></div>
           <div className="absolute w-32 h-32 bg-main rounded-full opacity-70 blur-3xl animate-[bounce2_10s_linear_infinite]"></div>
-          <style jsx>{`
-            @keyframes bounce1 {
-              0% { transform: translate(0, 0); }
-              25% { transform: translate(calc(100vw - 8rem), calc(50vh - 8rem)); }
-              50% { transform: translate(calc(100vw - 8rem), calc(100vh - 8rem)); }
-              75% { transform: translate(0, calc(50vh - 8rem)); }
-              100% { transform: translate(0, 0); }
-            }
-            @keyframes bounce2 {
-              0% { transform: translate(calc(100vw - 8rem), 0); }
-              25% { transform: translate(0, calc(50vh - 8rem)); }
-              50% { transform: translate(0, calc(100vh - 8rem)); }
-              75% { transform: translate(calc(100vw - 8rem), calc(50vh - 8rem)); }
-              100% { transform: translate(calc(100vw - 8rem), 0); }
-            }
-          `}</style>
         </div>
         <div className="max-w-7xl mx-auto relative">
           <div className="text-center">

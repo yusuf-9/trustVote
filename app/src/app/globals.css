@@ -49,17 +49,16 @@ body {
     --main-dark: 270 85% 28%;
     --main-light: 270 85% 91%; */
 
-    
     /* coral theme */
     /* --main: 16 85% 34%;
     --main-dark: 16 85% 28%;
     --main-light: 16 85% 91%; */
-    
+
     /* Goldish theme */
     /* --main: 54 85% 34%;
     --main-dark: 54 85% 28%; 
     --main-light: 54 85% 91%; */
-    
+
     /* teal theme */
     --main: 180 85% 34%;
     --main-dark: 180 85% 28%;
@@ -74,4 +73,39 @@ body {
 }
 
 @layer base {
+}
+
+@keyframes bounce1 {
+  0% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(calc(100vw - 8rem), calc(50vh - 8rem));
+  }
+  50% {
+    transform: translate(calc(100vw - 8rem), calc(100vh - 8rem));
+  }
+  75% {
+    transform: translate(0, calc(50vh - 8rem));
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+@keyframes bounce2 {
+  0% {
+    transform: translate(calc(100vw - 8rem), 0);
+  }
+  25% {
+    transform: translate(0, calc(50vh - 8rem));
+  }
+  50% {
+    transform: translate(0, calc(100vh - 8rem));
+  }
+  75% {
+    transform: translate(calc(100vw - 8rem), calc(50vh - 8rem));
+  }
+  100% {
+    transform: translate(calc(100vw - 8rem), 0);
+  }
 }
