@@ -45,7 +45,11 @@ Tasks -
     - poll results page
     - poll update page
     - poll voting page
-- deploy app preview on vercel
+- deploy app preview on vercel - done
+    - create a staging domain on yusuf-creates.online (trust-vote.staging.yusuf-creates.online) - done
+    - create google oauth keys and link them with the staging domain (*.staging.yusuf-creates.online and staging.yusuf-creates.online) - done
+    - sort out nodemailer authentication stuff. Ideally, we should be able to send emails without auth
+
 - implement logic for poll contract creation (BE)
 - integrate poll creation with contract (BE)
 - integrate polls page to show all polls (BE & FE)
