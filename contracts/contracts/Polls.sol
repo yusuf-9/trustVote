@@ -74,7 +74,7 @@ contract Polls {
         Poll storage poll = polls[_pollId];
 
         require(
-            !(block.timestamp >= poll.startsAt && block.timestamp <= poll.endsAt),
+            (block.timestamp >= poll.startsAt && block.timestamp <= poll.endsAt),
             "Poll not active"
         );
         require(!poll.hasVoted[_emailHash], "Already voted");

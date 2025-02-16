@@ -10,5 +10,15 @@ export const getPollContract = async () => {
 
     const provider = new ethers.BrowserProvider(window.ethereum);
     const signer = await provider.getSigner();
+
+    // Check if the correct network is selected
+    const network = await provider.getNetwork();
+    if (network.chainId !== 1337) {
+        await window.ethereum.request({
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId: "0x539" }], // 1337 in hex
+        });
+    }
+
     return new ethers.Contract(CONTRACT_ADDRESS, PollsABI.abi, signer);
 };
