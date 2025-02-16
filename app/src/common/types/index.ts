@@ -11,3 +11,9 @@ declare module "next-auth" {
     id: string;
   }
 }
+
+declare global {
+  interface Window {
+    ethereum?: any;
+  }
+}
