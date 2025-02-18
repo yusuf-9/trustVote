@@ -145,6 +145,7 @@ export default class AuthService {
         authProvider: true,
       },
     });
+    
     return user;
   }
 

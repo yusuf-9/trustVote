@@ -74,7 +74,8 @@ contract Polls {
         Poll storage poll = polls[_pollId];
 
         require(
-            (block.timestamp >= poll.startsAt && block.timestamp <= poll.endsAt),
+            (block.timestamp >= poll.startsAt &&
+                block.timestamp <= poll.endsAt),
             "Poll not active"
         );
         require(!poll.hasVoted[_emailHash], "Already voted");
@@ -99,7 +100,9 @@ contract Polls {
         candidate.voteCount++;
     }
 
-    function getPoll(uint256 _pollId)
+    function getPoll(
+        uint256 _pollId
+    )
         public
         view
         returns (
@@ -131,7 +134,9 @@ contract Polls {
         );
     }
 
-    function getPollsByCreator(bytes32 _creatorEmailHash)
+    function getPollsByCreator(
+        bytes32 _creatorEmailHash
+    )
         public
         view
         returns (
@@ -166,9 +171,17 @@ contract Polls {
                 index++;
             }
         }
+
+        return (pollIds, names, descriptions, startsAt, endsAt);
     }
 
-    function getPollsByVoter(bytes32 _voterEmailHash)
+    function getPollCount() public view returns (uint256) {
+        return pollCount;
+    }
+
+    function getPollsByVoter(
+        bytes32 _voterEmailHash
+    )
         public
         view
         returns (
@@ -209,5 +222,7 @@ contract Polls {
                 }
             }
         }
+
+        return (pollIds, names, descriptions, startsAt, endsAt);
     }
 }

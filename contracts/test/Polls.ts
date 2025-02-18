@@ -138,6 +138,7 @@ describe("Polls", function () {
       );
 
       const creatorPolls = await polls.getPollsByCreator(creatorEmailHash);
+      console.log({ creatorPolls });
       expect(creatorPolls.pollIds.length).to.equal(1);
       expect(creatorPolls.names[0]).to.equal(fixture.pollName);
     });
