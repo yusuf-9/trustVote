@@ -1,7 +1,6 @@
 "use client";
 
-import { Search } from "lucide-react";
-import { useState } from "react";
+import { LogOut, Search, Settings } from "lucide-react";
 import { Button } from "@/client/common/components/ui/button";
 import { Input } from "@/client/common/components/ui/input";
 import { User } from "lucide-react";
@@ -9,33 +8,18 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/client/common/components/ui/dropdown-menu";
+import { useWallet } from "@/client/modules/polls/contexts/wallet";
+import { signOut } from "next-auth/react";
+import useUserInfo from "@/client/modules/auth/hooks/use-user-info";
 
 export default function DashboardHeader() {
-  const [walletAddress, setWalletAddress] = useState<string | null>(null);
-  const [accounts, setAccounts] = useState<string[]>([]);
+  const { wallet, isConnected } = useWallet();
 
-  const connectWallet = async () => {
-    if (!window.ethereum) {
-      alert("Please install MetaMask");
-      return;
-    }
-
-    try {
-      const accounts = await window.ethereum.request({
-        method: "eth_requestAccounts",
-      });
-      setAccounts(accounts);
-      setWalletAddress(accounts[0]);
-    } catch (error) {
-      console.error("Error connecting wallet:", error);
-    }
-  };
-
-  const selectAccount = (account: string) => {
-    setWalletAddress(account);
-  };
+  const { userInfo } = useUserInfo();
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-main-light bg-white px-6">
@@ -48,33 +32,57 @@ export default function DashboardHeader() {
         />
       </div>
       <div className="flex items-center gap-2">
-        {walletAddress ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="text-sm">
-                {`${walletAddress.slice(0,6)}...${walletAddress.slice(-4)}`}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              {accounts.map((account) => (
-                <DropdownMenuItem key={account} onClick={() => selectAccount(account)}>
-                  {`${account.slice(0,6)}...${account.slice(-4)}`}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+        {isConnected ? (
+          <h6 className="text-sm text-text-light bg-white border border-main-light rounded-md px-2 py-1">
+            {`${wallet?.slice(0, 6)}...${wallet?.slice(-4)}`}
+          </h6>
         ) : (
-          <Button variant="outline" onClick={connectWallet} className="text-sm">
-            Connect Wallet
-          </Button>
+          <h6 className="text-sm text-text-light bg-white border border-main-light rounded-md px-2 py-1">
+            No wallet connected
+          </h6>
         )}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="rounded-full"
-        >
-          <User className="h-5 w-5 text-[hsl(var(--text-light))]" />
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              className="relative h-8 w-8 rounded-full bg-green p-0"
+            >
+              <User className="h-4 w-4 text-[#0F9D58]" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="w-56"
+            align="end"
+            forceMount
+          >
+            <DropdownMenuLabel className="font-normal">
+              <div className="flex flex-col space-y-1">
+                <p className="text-sm font-medium leading-none">{userInfo?.name ?? ""}</p>
+                <p className="text-xs leading-none text-muted-foreground">{userInfo?.email ?? ""}</p>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="cursor-pointer"
+              disabled
+            >
+              <Settings className="mr-2 h-4 w-4" />
+              <span className="text-sm">Settings</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() =>
+                signOut({
+                  redirect: true,
+                  callbackUrl: "/auth/login",
+                })
+              }
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              <span className="text-sm">Log out</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );

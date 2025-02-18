@@ -1,4 +1,3 @@
-import { format } from "date-fns";
 import { QUERIES } from "@/client/common/constants/queries";
 import { useQuery } from "@tanstack/react-query";
 import fetchPollsOfCreator from "../api";
@@ -26,9 +25,10 @@ const useCreatorPolls = (userEmail: string | null) => {
         id: pollIds[index].toString(),
         title: names[index],
         description: descriptions[index],
-        startTime: format(new Date(Number(startsAt[index])), "yyyy-MM-dd HH:mm:ss"),
-        endTime: format(new Date(Number(endsAt[index])), "yyyy-MM-dd HH:mm:ss"),
-      }));
+        startTime: Number(startsAt[index]),
+          endTime: Number(endsAt[index]),
+        }))
+        .sort((a, b) => Number(b.id) - Number(a.id));
 
       return formattedPolls;
     },

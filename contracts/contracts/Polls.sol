@@ -22,6 +22,7 @@ contract Polls {
         // Voters list
         mapping(uint256 => bytes32) registeredVoterEmailHashes; // Indexed email hashes
         uint256 voterCount;
+        uint256 totalVotes;
         mapping(bytes32 => bool) hasVoted; // Tracks if email has voted
     }
 
@@ -50,7 +51,7 @@ contract Polls {
         newPoll.startsAt = _startsAt;
         newPoll.endsAt = _endsAt;
         newPoll.creatorEmailHash = _creatorEmailHash;
-
+        newPoll.totalVotes = 0;
         // Store candidates in mapping, starting from index 1
         for (uint256 i = 0; i < _candidates.length; i++) {
             newPoll.candidates[i + 1] = PollCandidate(_candidates[i], 0);
@@ -98,6 +99,7 @@ contract Polls {
 
         // Increment vote count
         candidate.voteCount++;
+        poll.totalVotes++;
     }
 
     function getPoll(
@@ -145,6 +147,8 @@ contract Polls {
             string[] memory descriptions,
             uint256[] memory startsAt,
             uint256[] memory endsAt
+            // uint256[] memory totalVoters,
+            // uint256[] memory totalVoted
         )
     {
         uint256 count = 0;
@@ -159,6 +163,8 @@ contract Polls {
         descriptions = new string[](count);
         startsAt = new uint256[](count);
         endsAt = new uint256[](count);
+        // totalVoters = new uint256[](count);
+        // totalVoted = new uint256[](count);
 
         uint256 index = 0;
         for (uint256 i = 1; i <= pollCount; i++) {
@@ -168,6 +174,9 @@ contract Polls {
                 descriptions[index] = polls[i].description;
                 startsAt[index] = polls[i].startsAt;
                 endsAt[index] = polls[i].endsAt;
+                // totalVoters[index] = polls[i].voterCount;
+                // totalVoted[index] = polls[i].totalVotes;
+                
                 index++;
             }
         }

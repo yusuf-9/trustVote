@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "@/client/common/hooks/use-toast";
 import useUserInfo from "@/client/modules/auth/hooks/use-user-info";
+import { QUERIES } from "@/client/common/constants/queries";
+import { useQueryClient } from "@tanstack/react-query";
 
 const formSchema = z
   .object({
@@ -46,7 +48,7 @@ type FormSchema = z.infer<typeof formSchema>;
 
 export default function useCreatePoll() {
   const { userInfo, isLoading } = useUserInfo();
-
+  const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<FormSchema>({
@@ -122,6 +124,8 @@ export default function useCreatePoll() {
         description: "Your poll has been created and is now live.",
         variant: "success",
       });
+      // invalidate queries
+      queryClient.invalidateQueries({ queryKey: [QUERIES.CREATED_POLLS, userInfo.email] });
       console.log("transaction successful");
     } catch (error) {
       console.error("Error creating poll:", error);

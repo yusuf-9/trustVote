@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
-import PollsABI from "@/common/contract-abis/polls.json";
+import PollsABI from "../abis/polls.json";
 
-const CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; // Replace with the actual deployed contract address
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_POLLS_CONTRACT_ADDRESS ?? ""; // Replace with the actual deployed contract address
 
 export const getPollContract = async () => {
   if (!window.ethereum) {

@@ -17,9 +17,11 @@ export default async function fetchPollsOfCreator(userEmail: string) {
       descriptions: string[];
       startsAt: string[];
       endsAt: string[];
+      totalVoters: string[];
+      totalVoted: string[];
     } = await contract?.getPollsByCreator(emailHash);
 
-    console.log({ pollData });
+    console.log({pollData});
 
     return pollData;
   } catch (error) {
