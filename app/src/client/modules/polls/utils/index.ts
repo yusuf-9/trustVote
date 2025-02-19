@@ -8,8 +8,8 @@ export const getPollContract = async () => {
     throw new Error("No crypto wallet found. Please install MetaMask.");
   }
 
-  const provider = new ethers.BrowserProvider(window.ethereum);
-  const signer = await provider.getSigner();
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const signer = provider.getSigner();
 
   return new ethers.Contract(CONTRACT_ADDRESS, PollsABI.abi, signer);
 };

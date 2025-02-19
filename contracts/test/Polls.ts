@@ -188,20 +188,21 @@ describe("Polls", function () {
 
       // Get poll details before voting
       const pollBeforeVote = await polls.getPollByVoter(1, voterHashes[0]);
-      expect(pollBeforeVote.names[0]).to.equal(fixture.pollName);
-      expect(pollBeforeVote.descriptions[0]).to.equal(fixture.description);
-      expect(pollBeforeVote.startsAt[0]).to.equal(fixture.startsAt);
-      expect(pollBeforeVote.endsAt[0]).to.equal(fixture.endsAt);
-      expect(pollBeforeVote.hasVoted[0]).to.equal(false);
-      expect(pollBeforeVote.candidates[0]).to.deep.equal(fixture.candidates);
-      expect(pollBeforeVote.votedCandidateNames[0]).to.equal("");
+      expect(pollBeforeVote.name).to.equal(fixture.pollName);
+      expect(pollBeforeVote.description).to.equal(fixture.description);
+      expect(pollBeforeVote.startTime).to.equal(fixture.startsAt);
+      expect(pollBeforeVote.endTime).to.equal(fixture.endsAt);
+      expect(pollBeforeVote.hasVoted).to.equal(false);
+      expect(pollBeforeVote.candidates).to.deep.equal(fixture.candidates);
+      expect(pollBeforeVote.votedCandidateName).to.equal("");
 
       // Vote and check updated details
       await polls.vote(1, 1, voterHashes[0]);
       
       const pollAfterVote = await polls.getPollByVoter(1, voterHashes[0]);
-      expect(pollAfterVote.hasVoted[0]).to.equal(true);
-      expect(pollAfterVote.votedCandidateNames[0]).to.equal(fixture.candidates[0]);
+
+      expect(pollAfterVote.hasVoted).to.equal(true);
+      expect(pollAfterVote.votedCandidateName).to.equal(fixture.candidates[0]);
     });
 
     it("Should return voter details", async function () {

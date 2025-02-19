@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFieldArray } from "react-hook-form";
 import * as z from "zod";
 import { getPollContract } from "@/client/modules/polls/utils";
-import { keccak256, toUtf8Bytes } from "ethers";
+import { ethers } from "ethers";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "@/client/common/hooks/use-toast";
@@ -101,13 +101,13 @@ export default function useCreatePoll() {
 
       // Hash creator email (you'll need to get this from your auth system)
       const creatorEmail = sanitizeEmail(userInfo.email); // Replace with actual user email
-      const creatorEmailHash = keccak256(toUtf8Bytes(creatorEmail));
+      const creatorEmailHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(creatorEmail));
 
       // Prepare candidates array
       const candidates = values.candidates.map(c => c.name);
 
       // Hash voter emails
-      const voterHashes = values.voters.map(v => keccak256(toUtf8Bytes(sanitizeEmail(v.email))));
+      const voterHashes = values.voters.map(v => ethers.utils.keccak256(ethers.utils.toUtf8Bytes(sanitizeEmail(v.email))));
 
       // Create poll
       const tx = await contract.createPoll(

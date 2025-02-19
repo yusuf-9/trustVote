@@ -300,14 +300,13 @@ contract Polls {
         public
         view
         returns (
-            uint256[] memory pollIds,
-            string[] memory names,
-            string[] memory descriptions, 
-            uint256[] memory startsAt,
-            uint256[] memory endsAt
-            // bool[] memory hasVoted,
-            // string[][] memory candidates,
-            // string[] memory votedCandidateNames
+            string memory name,
+            string memory description,
+            uint256 startTime,
+            uint256 endTime,
+            bool hasVoted,
+            string[] memory candidates,
+            string memory votedCandidateName
         )
     {
         require(_pollId > 0 && _pollId <= pollCount, "Invalid poll ID");
@@ -324,47 +323,35 @@ contract Polls {
         }
         require(isRegistered, "Voter is not registered for this poll");
 
-        // Initialize arrays with length 1 since we're returning single poll
-        pollIds = new uint256[](1);
-        names = new string[](1);
-        descriptions = new string[](1);
-        startsAt = new uint256[](1);
-        endsAt = new uint256[](1);
-        // hasVoted = new bool[](1);
-        // candidates = new string[][](1);
-        // votedCandidateNames = new string[](1);
-
-        pollIds[0] = _pollId;
-        names[0] = poll.name;
-        descriptions[0] = poll.description;
-        startsAt[0] = poll.startsAt;
-        endsAt[0] = poll.endsAt;
-        // hasVoted[0] = poll.hasVoted[_voterEmailHash];
+        name = poll.name;
+        description = poll.description;
+        startTime = poll.startsAt;
+        endTime = poll.endsAt;
+        hasVoted = poll.hasVoted[_voterEmailHash];
+        candidates = new string[](poll.candidateCount);
         
         // Get all candidate names
-        // candidates[0] = new string[](poll.candidateCount);
-        // for (uint256 i = 1; i <= poll.candidateCount; i++) {
-        //     candidates[0][i - 1] = poll.candidates[i].name;
-        // }
+        for (uint256 i = 1; i <= poll.candidateCount; i++) {
+            candidates[i - 1] = poll.candidates[i].name;
+        }
 
-        // // Get voted candidate name if voter has voted
-        // votedCandidateNames[0] = "";
-        // if (hasVoted[0]) {
-        //     uint256 votedCandidateId = poll.voterChoices[_voterEmailHash];
-        //     if (votedCandidateId > 0 && votedCandidateId <= poll.candidateCount) {
-        //         votedCandidateNames[0] = poll.candidates[votedCandidateId].name;
-        //     }
-        // }
+        // Get voted candidate name if voter has voted
+        votedCandidateName = "";
+        if (hasVoted) {
+            uint256 votedCandidateId = poll.voterChoices[_voterEmailHash];
+            if (votedCandidateId > 0 && votedCandidateId <= poll.candidateCount) {
+                votedCandidateName = poll.candidates[votedCandidateId].name;
+            }
+        }
 
         return (
-            pollIds,
-            names,
-            descriptions,
-            startsAt,
-            endsAt
-            // hasVoted,
-            // candidates,
-            // votedCandidateNames
+            name,
+            description,
+            startTime,
+            endTime,
+            hasVoted,
+            candidates,
+            votedCandidateName
         );
     }
 }

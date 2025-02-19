@@ -41,7 +41,7 @@ const WalletProvider = ({ children }: PropsWithChildren) => {
     }
 
     try {
-      const provider = new ethers.BrowserProvider(window.ethereum);
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
       const accounts = await provider.send("eth_requestAccounts", []);
       setWallet(accounts[0]);
     } catch (err) {
@@ -54,7 +54,7 @@ const WalletProvider = ({ children }: PropsWithChildren) => {
       if (window.ethereum) {
         try {
           setIsConnecting(true);
-          const provider = new ethers.BrowserProvider(window.ethereum);
+          const provider = new ethers.providers.Web3Provider(window.ethereum);
           const accounts = await provider.send("eth_accounts", []); // This gets currently connected accounts without prompting
           if (accounts.length > 0) {
             setWallet(accounts[0]);

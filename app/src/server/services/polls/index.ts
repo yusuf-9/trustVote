@@ -1,12 +1,12 @@
 import { prisma } from "@/server/lib/prisma";
-import { keccak256, toUtf8Bytes } from "ethers";
+import { ethers } from "ethers";
 import { sanitizeEmail } from "@/common/utils";
 export default class PollsService {
   static async registerPollVoterHashes(voterEmails: string[]): Promise<void> {
     
     const voterHashes = voterEmails.map(email => {
       const sanitizedEmail = sanitizeEmail(email);
-      const hash = keccak256(toUtf8Bytes(sanitizedEmail));
+      const hash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(sanitizedEmail));
       return {
         email: sanitizedEmail,
         hash,

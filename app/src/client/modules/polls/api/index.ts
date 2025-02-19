@@ -1,14 +1,13 @@
-import { toUtf8Bytes } from "ethers";
-import { keccak256 } from "ethers";
 import { getPollContract } from "../utils";
 import axiosClientInstance from "@/client/common/services/axios/client-instance";
+import { ethers } from "ethers";
 
 export async function fetchPollsOfCreator(userEmail: string) {
   try {
     const contract = await getPollContract();
 
     // Hash the email
-    const emailHash = keccak256(toUtf8Bytes(userEmail));
+    const emailHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(userEmail));
 
     // Fetch polls from the smart contract
     const pollData: {
@@ -35,7 +34,7 @@ export async function fetchVotesOfCreator(userEmail: string) {
     const contract = await getPollContract();
 
     // Hash the email
-    const emailHash = keccak256(toUtf8Bytes(userEmail));
+    const emailHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(userEmail));
 
     // Fetch votes from the smart contract
     const votesData: {
@@ -88,7 +87,7 @@ export async function fetchPollsAvailableForVote(userEmail: string) {
     const contract = await getPollContract();
 
     // Hash the email
-    const emailHash = keccak256(toUtf8Bytes(userEmail));
+    const emailHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(userEmail));
 
     // Fetch polls from the smart contract
     const pollData: {
@@ -114,7 +113,7 @@ export async function fetchPollDetailsForVoter(pollId: string, userEmail: string
     const contract = await getPollContract();
 
     // Hash the email
-    const emailHash = keccak256(toUtf8Bytes(userEmail));
+    const emailHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(userEmail));
 
     console.log({emailHash, pollId});
 
