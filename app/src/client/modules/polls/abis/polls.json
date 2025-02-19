@@ -98,29 +98,39 @@
       "name": "getPollByVoter",
       "outputs": [
         {
-          "internalType": "uint256[]",
-          "name": "pollIds",
-          "type": "uint256[]"
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "startTime",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "endTime",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "hasVoted",
+          "type": "bool"
         },
         {
           "internalType": "string[]",
-          "name": "names",
+          "name": "candidates",
           "type": "string[]"
         },
         {
-          "internalType": "string[]",
-          "name": "descriptions",
-          "type": "string[]"
-        },
-        {
-          "internalType": "uint256[]",
-          "name": "startsAt",
-          "type": "uint256[]"
-        },
-        {
-          "internalType": "uint256[]",
-          "name": "endsAt",
-          "type": "uint256[]"
+          "internalType": "string",
+          "name": "votedCandidateName",
+          "type": "string"
         }
       ],
       "stateMutability": "view",
@@ -246,6 +256,30 @@
           "internalType": "bool[]",
           "name": "hasVoted",
           "type": "bool[]"
+        },
+        {
+          "internalType": "string[]",
+          "name": "candidates",
+          "type": "string[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "_voterEmailHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getVotedCandidatesByVoter",
+      "outputs": [
+        {
+          "internalType": "string[]",
+          "name": "votedCandidates",
+          "type": "string[]"
         }
       ],
       "stateMutability": "view",

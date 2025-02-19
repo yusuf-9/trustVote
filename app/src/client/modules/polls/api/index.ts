@@ -97,6 +97,7 @@ export async function fetchPollsAvailableForVote(userEmail: string) {
       startsAt: string[];
       endsAt: string[];
       hasVoted: boolean[];
+      candidates: string[];
     } = await contract?.getPollsByVoter(emailHash);
 
     console.log({pollData});
@@ -133,6 +134,25 @@ export async function fetchPollDetailsForVoter(pollId: string, userEmail: string
     return pollDetails;
   } catch (error) {
     console.error("Error fetching poll details for voter:", error);
+    throw error;
+  }
+}
+
+export async function fetchVotedCandidatesByVoter(userEmail: string) {
+  try {
+    const contract = await getPollContract();
+
+    // Hash the email
+    const emailHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(userEmail));
+
+    // Fetch voted candidates from the smart contract
+    const votedCandidates: string[] = await contract?.getVotedCandidatesByVoter(emailHash);
+
+    console.log({votedCandidates});
+
+    return votedCandidates;
+  } catch (error) {
+    console.error("Error fetching voted candidates by voter:", error);
     throw error;
   }
 }

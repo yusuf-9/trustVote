@@ -15,6 +15,8 @@ export type VoterPoll = {
   startTime: number;
   endTime: number;
   hasVoted: boolean;
+  candidates: string[];
+  votedCandidate: string
 };
 
 export type VoterPollDetails = {

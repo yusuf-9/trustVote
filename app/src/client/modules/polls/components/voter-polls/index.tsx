@@ -8,6 +8,7 @@ import { Button } from "@/client/common/components/ui/button";
 // hooks
 import useUserInfo from "@/client/modules/auth/hooks/use-user-info";
 import useVoterPolls from "@/client/modules/polls/hooks/use-voter-polls";
+import { cn } from "@/client/common/utils";
 
 export default function VoterPolls() {
   const { userInfo } = useUserInfo();
@@ -27,6 +28,7 @@ export default function VoterPolls() {
         const now = Date.now();
         const hasStarted = now > poll.startTime;
         const hasEnded = now > poll.endTime;
+        const hasVoted = poll.votedCandidate;
 
         return (
           <Link
@@ -67,7 +69,14 @@ export default function VoterPolls() {
                   </div>
 
                   <div className="space-y-2 flex justify-end">
-                    <Button className="bg-[hsl(var(--main))] text-white hover:bg-[hsl(var(--main-dark))]">Vote</Button>
+                    <Button
+                      className={cn(
+                        "bg-[hsl(var(--main))] text-white hover:bg-[hsl(var(--main-dark))]",
+                        hasVoted && "bg-main/50 cursor-not-allowed hover:bg-main/50"
+                      )}
+                    >
+                      {hasVoted ? "Voted" : "Vote"}
+                    </Button>
                   </div>
                 </div>
               </div>

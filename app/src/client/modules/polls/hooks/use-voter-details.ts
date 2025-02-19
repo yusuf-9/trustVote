@@ -13,11 +13,13 @@ const useVoterDetails = (pollId: string) => {
       const voterDetails = await fetchVoterDetails(pollId);
       const emails = await getVoterEmailsFromHashes(voterDetails.allVoters as string[]);
 
-      const voterDetailsWithEmails = voterDetails.allVoters.map((voter, index) => ({
-        voter: voter as string,
-        email: emails[index] || '',
-        hasVoted: Boolean(voterDetails.hasVoted[index]),
-      }));
+      const voterDetailsWithEmails = voterDetails.allVoters.map((voter, index) => {
+        return {
+          voter: voter as string,
+          email: emails[index] || "",
+          hasVoted: Boolean(Number(voterDetails.hasVoted[index])),
+        };
+      });
 
       return voterDetailsWithEmails;
     },

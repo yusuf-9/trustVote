@@ -161,6 +161,8 @@ describe("Polls", function () {
       );
 
       const voterPolls = await polls.getPollsByVoter(voterHashes[0]);
+      console.log({ voterPolls });
+
       expect(voterPolls.pollIds.length).to.equal(1);
       expect(voterPolls.names[0]).to.equal(fixture.pollName);
       expect(voterPolls.hasVoted[0]).to.equal(false);
@@ -203,6 +205,27 @@ describe("Polls", function () {
 
       expect(pollAfterVote.hasVoted).to.equal(true);
       expect(pollAfterVote.votedCandidateName).to.equal(fixture.candidates[0]);
+    });
+
+    it("Should return voted candidates by voter", async function () {
+      const fixture = await loadFixture(deployPollsFixture);
+      const { polls, voterHashes } = fixture;
+
+      // Create poll
+      await polls.createPoll(
+        fixture.creatorEmailHash,
+        fixture.pollName,
+        fixture.description,
+        fixture.startsAt,
+        fixture.endsAt,
+        fixture.candidates,
+        fixture.voterHashes
+      );
+
+      await polls.vote(1, 1, voterHashes[0]);
+
+      const votedCandidates = await polls.getVotedCandidatesByVoter(voterHashes[0]);
+      expect(votedCandidates).to.deep.equal([fixture.candidates[0]]);
     });
 
     it("Should return voter details", async function () {

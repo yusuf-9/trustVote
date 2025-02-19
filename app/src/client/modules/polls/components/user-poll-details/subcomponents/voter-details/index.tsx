@@ -13,6 +13,8 @@ interface VoterDetailsProps {
 const VoterDetails: React.FC<VoterDetailsProps> = ({ pollId, hasPollEnded }) => {
   const { voterDetails, isLoading, error } = useVoterDetails(pollId);
 
+  console.log({voterDetails});
+
   if (isLoading) {
     return <div>Loading...</div>;
   }

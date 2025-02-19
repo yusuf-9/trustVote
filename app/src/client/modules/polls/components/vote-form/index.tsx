@@ -13,8 +13,8 @@ import {
   CardContent,
   CardFooter,
 } from "@/client/common/components/ui/card";
-import useVoterPoll from "../../hooks/use-voter-poll";
 import { useState } from "react";
+import useVoterPolls from "../../hooks/use-voter-polls";
 interface VoteFormProps {
   pollId: string;
 }
@@ -22,18 +22,20 @@ interface VoteFormProps {
 const VoteForm: React.FC<VoteFormProps> = ({ pollId }) => {
   const { userInfo } = useUserInfo();
 
-  const { poll, isLoading, error } = useVoterPoll(pollId, userInfo?.email ?? '');
+  const { polls, isLoading, error } = useVoterPolls(userInfo?.email ?? "");
+
+  const poll = polls?.find(poll => poll.id === pollId);
 
   const hasPollEnded = Boolean(poll?.endTime && poll.endTime < new Date().getTime());
 
-  const [selectedOption, setSelectedOption] = useState<string>('');
+  const [selectedOption, setSelectedOption] = useState<string>(poll?.votedCandidate ?? "candidate 1");
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(selectedOption);
   };
 
-  console.log({poll});
+  if (!poll) return <div>Poll not found</div>;
 
   if (isLoading) return <div>Loading...</div>;
 
@@ -47,7 +49,7 @@ const VoteForm: React.FC<VoteFormProps> = ({ pollId }) => {
         <CardTitle>{poll.title}</CardTitle>
         <CardDescription>{poll.description}</CardDescription>
       </CardHeader>
-      {/* <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit}>
         <CardContent>
           <RadioGroup
             value={selectedOption}
@@ -70,12 +72,13 @@ const VoteForm: React.FC<VoteFormProps> = ({ pollId }) => {
         <CardFooter>
           <Button
             type="submit"
-            disabled={!selectedOption}
+            className="bg-main text-white hover:bg-main-dark"
+            disabled={Boolean(hasPollEnded || poll.votedCandidate)}
           >
-            Submit Vote
+            {hasPollEnded ? "Vote Submitted" : "Submit Vote"}
           </Button>
         </CardFooter>
-      </form> */}
+      </form>
     </Card>
   );
 };

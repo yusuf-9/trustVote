@@ -1,6 +1,6 @@
 import { QUERIES } from "@/client/common/constants/queries";
 import { useQuery } from "@tanstack/react-query";
-import { fetchPollsAvailableForVote } from "../api";
+import { fetchPollsAvailableForVote, fetchVotedCandidatesByVoter } from "../api";
 import { VoterPoll } from "../types";
 
 const useVoterPolls = (userEmail: string | null) => {
@@ -16,13 +16,17 @@ const useVoterPolls = (userEmail: string | null) => {
       const pollData = await fetchPollsAvailableForVote(userEmail);
       if (!pollData) return [];
 
+      const votedCandidates = await fetchVotedCandidatesByVoter(userEmail);
+      if (!votedCandidates) return [];
+
       const pollIds = pollData.pollIds; // Array of poll IDs
       const names = pollData.names; // Array of poll names
       const descriptions = pollData.descriptions; // Array of poll descriptions
       const startsAt = pollData.startsAt; // Array of start times
       const endsAt = pollData.endsAt; // Array of end times
       const hasVoted = pollData.hasVoted; // Array of hasVoted
-
+      const candidates = pollData.candidates; // Array of candidates
+      
       // Map values correctly
       const formattedPolls: VoterPoll[] = pollIds
         .map((_: any, index: number) => ({
@@ -32,8 +36,12 @@ const useVoterPolls = (userEmail: string | null) => {
           startTime: Number(startsAt[index]),
           endTime: Number(endsAt[index]),
           hasVoted: hasVoted[index],
+          candidates: candidates[index].split("+_)(*&^%$#@!").filter((candidate: string) => candidate !== ""),
+          votedCandidate: votedCandidates[index],
         }))
         .sort((a, b) => Number(b.id) - Number(a.id));
+
+      console.log({ formattedPolls });
 
       return formattedPolls;
     },
