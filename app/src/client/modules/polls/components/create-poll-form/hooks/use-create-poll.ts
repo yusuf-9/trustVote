@@ -9,6 +9,9 @@ import { toast } from "@/client/common/hooks/use-toast";
 import useUserInfo from "@/client/modules/auth/hooks/use-user-info";
 import { QUERIES } from "@/client/common/constants/queries";
 import { useQueryClient } from "@tanstack/react-query";
+import axiosClientInstance from "@/client/common/services/axios/client-instance";
+import { retryPromiseIfFails } from "@/client/common/utils";
+import { sanitizeEmail } from "@/common/utils";
 
 const formSchema = z
   .object({
@@ -97,14 +100,14 @@ export default function useCreatePoll() {
       const endsAt = values.endDate.getTime();
 
       // Hash creator email (you'll need to get this from your auth system)
-      const creatorEmail = userInfo.email; // Replace with actual user email
+      const creatorEmail = sanitizeEmail(userInfo.email); // Replace with actual user email
       const creatorEmailHash = keccak256(toUtf8Bytes(creatorEmail));
 
       // Prepare candidates array
       const candidates = values.candidates.map(c => c.name);
 
       // Hash voter emails
-      const voterHashes = values.voters.map(v => keccak256(toUtf8Bytes(v.email)));
+      const voterHashes = values.voters.map(v => keccak256(toUtf8Bytes(sanitizeEmail(v.email))));
 
       // Create poll
       const tx = await contract.createPoll(
@@ -127,6 +130,7 @@ export default function useCreatePoll() {
       // invalidate queries
       queryClient.invalidateQueries({ queryKey: [QUERIES.CREATED_POLLS, userInfo.email] });
       console.log("transaction successful");
+      storeVoterEmailHashesInDb(values.voters.map(v => v.email));
     } catch (error) {
       console.error("Error creating poll:", error);
       // You might want to show an error toast/notification here
@@ -134,6 +138,16 @@ export default function useCreatePoll() {
       setIsSubmitting(false);
     }
   }
+
+  const storeVoterEmailHashesInDb = async (voterEmails: string[]) => {
+    try {
+      await retryPromiseIfFails(async () => {
+        await axiosClientInstance.post("/email-hash", { emails: voterEmails }, { withCredentials: true });
+      });
+    } catch (error) {
+      console.error("Error storing hashes in db:", error);
+    }
+  };
 
   return {
     form,

@@ -45,6 +45,13 @@ model AccessToken {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model EmailHash {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  hash      String   @unique
+  createdAt DateTime @default(now())
+}
+
 enum AuthProvider {
   LOCAL
   GOOGLE

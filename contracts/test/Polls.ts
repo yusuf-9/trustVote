@@ -138,7 +138,7 @@ describe("Polls", function () {
       );
 
       const creatorPolls = await polls.getPollsByCreator(creatorEmailHash);
-      console.log({ creatorPolls });
+      const votes = await polls.getPollVotesByCreator(creatorEmailHash);
       expect(creatorPolls.pollIds.length).to.equal(1);
       expect(creatorPolls.names[0]).to.equal(fixture.pollName);
     });
@@ -161,6 +161,40 @@ describe("Polls", function () {
       const voterPolls = await polls.getPollsByVoter(voterHashes[0]);
       expect(voterPolls.pollIds.length).to.equal(1);
       expect(voterPolls.names[0]).to.equal(fixture.pollName);
+    });
+
+    it("Should return voter details", async function () {
+      const fixture = await loadFixture(deployPollsFixture);
+      const { polls, voterHashes } = fixture;
+
+      // Create poll
+      await polls.createPoll(
+        fixture.creatorEmailHash,
+        fixture.pollName,
+        fixture.description,
+        fixture.startsAt,
+        fixture.endsAt,
+        fixture.candidates,
+        fixture.voterHashes
+      );
+
+      // Have first voter vote
+      await polls.vote(1, 1, voterHashes[0]);
+
+      const voterDetails = await polls.getVoterDetails(1);
+      console.log({ voterDetails });
+
+      // Check total voters matches registered voters
+      expect(voterDetails.allVoters.length).to.equal(voterHashes.length);
+      expect(voterDetails.hasVoted.length).to.equal(voterHashes.length);
+
+      // Check first voter is marked as voted
+      expect(voterDetails.allVoters[0]).to.equal(voterHashes[0]);
+      expect(voterDetails.hasVoted[0]).to.equal(1);
+
+      // Check second voter is marked as not voted
+      expect(voterDetails.allVoters[1]).to.equal(voterHashes[1]); 
+      expect(voterDetails.hasVoted[1]).to.equal(0);
     });
   });
 });

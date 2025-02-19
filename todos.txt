@@ -1,0 +1,4 @@
+- create a new table to store email hash mappings
+- when creating a poll, hash the voter emails and store them in the db
+- when showing the voter details, get the hashed emails from the db using the hashes from the poll
+- 

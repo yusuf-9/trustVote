@@ -36,23 +36,35 @@ export default function UserPolls() {
                   <div className="text-sm space-y-1">
                     <div className="flex justify-between items-center">
                       <span className="font-semibold text-text">{hasStarted ? "Started at" : "Starts at"}</span>
-                      <span className="text-light">{new Date(poll.startTime).toLocaleString()}</span>
+                      <span className="text-light">{new Date(poll.startTime).toLocaleDateString('en-US', {
+                        day: 'numeric',
+                        month: 'short',
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        hour12: true
+                      })}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="font-semibold text-text">{hasEnded ? "Ended at" : "Ends at"}</span>
-                      <span className="text-light">{new Date(poll.endTime).toLocaleString()}</span>
+                      <span className="text-light">{new Date(poll.endTime).toLocaleDateString('en-US', {
+                        day: 'numeric', 
+                        month: 'short',
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        hour12: true
+                      })}</span>
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Total Votes</span>
-                      <span className="font-bold text-[hsl(var(--main))]">{100 + 2 * 50}</span>
+                      <span className="font-bold text-[hsl(var(--main))]">{poll.totalVotes} / {poll.totalVoters}</span>
                     </div>
                     <div className="h-2 bg-[hsl(var(--main-light))] rounded-full overflow-hidden">
                       <div
                         className="h-full bg-[hsl(var(--main))]"
-                        style={{ width: `${60 + 2 * 5}%` }}
+                        style={{ width: `${(poll.totalVotes / poll.totalVoters * 100) || 0}%` }}
                       />
                     </div>
                   </div>

@@ -4,9 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy-local": "npx hardhat ignition deploy ./ignition/modules/Polls.ts --network localhost",
-    "dev": "npx hardhat clean && npx hardhat node",
-    "clean": "rm -rf cache && rm -rf artifacts && rm -rf typechain && rm -rf ./ignition/modules/deployments && npx hardhat clean"
+    "deploy-local": "hardhat ignition deploy ./ignition/modules/Polls.ts --network localhost"
   },
   "keywords": [],
   "author": "",

@@ -103,6 +103,35 @@
           "type": "bytes32"
         }
       ],
+      "name": "getPollVotesByCreator",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "pollIds",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "totalVoters",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "totalVotes",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "_creatorEmailHash",
+          "type": "bytes32"
+        }
+      ],
       "name": "getPollsByCreator",
       "outputs": [
         {
@@ -167,6 +196,30 @@
         {
           "internalType": "uint256[]",
           "name": "endsAt",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_pollId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getVoterDetails",
+      "outputs": [
+        {
+          "internalType": "bytes32[]",
+          "name": "allVoters",
+          "type": "bytes32[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "hasVoted",
           "type": "uint256[]"
         }
       ],

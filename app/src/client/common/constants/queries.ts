@@ -4,4 +4,5 @@ export const QUERIES = {
   POLLS_AVAILABLE_FOR_VOTE: "polls-available-for-vote",
   POLL_DETAILS: "poll-details",
   POLL_RESULTS: "poll-results",
+  VOTER_DETAILS: "voter-details",
 };

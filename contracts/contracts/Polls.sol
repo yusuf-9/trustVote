@@ -51,7 +51,7 @@ contract Polls {
         newPoll.startsAt = _startsAt;
         newPoll.endsAt = _endsAt;
         newPoll.creatorEmailHash = _creatorEmailHash;
-        newPoll.totalVotes = 0;
+
         // Store candidates in mapping, starting from index 1
         for (uint256 i = 0; i < _candidates.length; i++) {
             newPoll.candidates[i + 1] = PollCandidate(_candidates[i], 0);
@@ -99,7 +99,6 @@ contract Polls {
 
         // Increment vote count
         candidate.voteCount++;
-        poll.totalVotes++;
     }
 
     function getPoll(
@@ -147,8 +146,6 @@ contract Polls {
             string[] memory descriptions,
             uint256[] memory startsAt,
             uint256[] memory endsAt
-            // uint256[] memory totalVoters,
-            // uint256[] memory totalVoted
         )
     {
         uint256 count = 0;
@@ -163,8 +160,6 @@ contract Polls {
         descriptions = new string[](count);
         startsAt = new uint256[](count);
         endsAt = new uint256[](count);
-        // totalVoters = new uint256[](count);
-        // totalVoted = new uint256[](count);
 
         uint256 index = 0;
         for (uint256 i = 1; i <= pollCount; i++) {
@@ -174,14 +169,74 @@ contract Polls {
                 descriptions[index] = polls[i].description;
                 startsAt[index] = polls[i].startsAt;
                 endsAt[index] = polls[i].endsAt;
-                // totalVoters[index] = polls[i].voterCount;
-                // totalVoted[index] = polls[i].totalVotes;
-                
                 index++;
             }
         }
 
         return (pollIds, names, descriptions, startsAt, endsAt);
+    }
+
+    function getPollVotesByCreator(
+        bytes32 _creatorEmailHash
+    )
+        public
+        view
+        returns (
+            uint256[] memory pollIds,
+            uint256[] memory totalVoters,
+            uint256[] memory totalVotes
+        )
+    {
+        uint256 count = 0;
+        for (uint256 i = 1; i <= pollCount; i++) {
+            if (polls[i].creatorEmailHash == _creatorEmailHash) {
+                count++;
+            }
+        }
+
+        pollIds = new uint256[](count);
+        totalVoters = new uint256[](count);
+        totalVotes = new uint256[](count);
+
+        uint256 index = 0;
+        for (uint256 i = 1; i <= pollCount; i++) {
+            if (polls[i].creatorEmailHash == _creatorEmailHash) {
+                pollIds[index] = i;
+                totalVoters[index] = polls[i].voterCount;
+                totalVotes[index] = polls[i].totalVotes;
+                index++;
+            }
+        }
+
+        return (pollIds, totalVoters, totalVotes);
+    }
+
+    function getVoterDetails(
+        uint256 _pollId
+    )
+        public
+        view
+        returns (
+            bytes32[] memory allVoters,
+            uint256[] memory hasVoted
+        )
+    {
+        require(_pollId > 0 && _pollId <= pollCount, "Invalid poll ID");
+
+        Poll storage poll = polls[_pollId];
+
+        uint256 votersCount = poll.voterCount;
+
+        allVoters = new bytes32[](votersCount);
+        hasVoted = new uint256[](votersCount);
+
+        for (uint256 i = 1; i <= votersCount; i++) {
+            bytes32 voterHash = poll.registeredVoterEmailHashes[i];
+            allVoters[i-1] = voterHash;
+            hasVoted[i-1] = poll.hasVoted[voterHash] ? 1 : 0;
+        }
+
+        return (allVoters, hasVoted);
     }
 
     function getPollCount() public view returns (uint256) {
