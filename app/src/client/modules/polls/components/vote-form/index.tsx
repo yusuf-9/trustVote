@@ -15,13 +15,20 @@ import {
 } from "@/client/common/components/ui/card";
 import { useState } from "react";
 import useVoterPolls from "../../hooks/use-voter-polls";
+import { getPollContract } from "../../utils";
+import { sanitizeEmail } from "@/common/utils";
+import { ethers } from "ethers";
+import { toast } from "@/client/common/hooks/use-toast";
+import { QUERIES } from "@/client/common/constants/queries";
+import { useQueryClient } from "@tanstack/react-query";
+
 interface VoteFormProps {
   pollId: string;
 }
 
 const VoteForm: React.FC<VoteFormProps> = ({ pollId }) => {
   const { userInfo } = useUserInfo();
-
+  const queryClient = useQueryClient();
   const { polls, isLoading, error } = useVoterPolls(userInfo?.email ?? "");
 
   const poll = polls?.find(poll => poll.id === pollId);
@@ -29,11 +36,57 @@ const VoteForm: React.FC<VoteFormProps> = ({ pollId }) => {
   const hasPollEnded = Boolean(poll?.endTime && poll.endTime < new Date().getTime());
 
   const [selectedOption, setSelectedOption] = useState<string>(poll?.votedCandidate ?? "candidate 1");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log(selectedOption);
-  };
+
+    try {
+      if (!userInfo || !poll) {
+        return;
+      }
+
+      setIsSubmitting(true);
+
+      // Get contract instance
+      const contract = await getPollContract();
+
+      const voterEmail = sanitizeEmail(userInfo.email); // Replace with actual user email
+      const voterEmailHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(voterEmail));
+
+      // Prepare candidates array
+      const indexOfCandidate = poll?.candidates.indexOf(selectedOption);
+
+      if (indexOfCandidate === -1) {
+        toast({
+          title: "Invalid candidate",
+          description: "Please select a valid candidate.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Create poll
+      const tx = await contract.vote(pollId, indexOfCandidate + 1, voterEmailHash);
+
+      // Wait for transaction to be mined
+      await tx.wait();
+      toast({
+        title: "Vote submitted successfully",
+        description: "Your vote has been submitted.",
+        variant: "success",
+      });
+      // invalidate queries
+      queryClient.invalidateQueries({ queryKey: [QUERIES.POLLS_AVAILABLE_FOR_VOTE, userInfo.email] });
+      queryClient.invalidateQueries({ queryKey: [QUERIES.POLL_DETAILS_FOR_VOTER, pollId, userInfo.email] });
+      console.log("transaction successful");
+    } catch (error) {
+      console.error("Error creating poll:", error);
+      // You might want to show an error toast/notification here
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   if (!poll) return <div>Poll not found</div>;
 
@@ -49,11 +102,12 @@ const VoteForm: React.FC<VoteFormProps> = ({ pollId }) => {
         <CardTitle>{poll.title}</CardTitle>
         <CardDescription>{poll.description}</CardDescription>
       </CardHeader>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={onSubmit}>
         <CardContent>
           <RadioGroup
             value={selectedOption}
             onValueChange={setSelectedOption}
+            disabled={Boolean(hasPollEnded || poll.votedCandidate || isSubmitting)}
           >
             {poll.candidates.map((option, index) => (
               <div
@@ -73,9 +127,9 @@ const VoteForm: React.FC<VoteFormProps> = ({ pollId }) => {
           <Button
             type="submit"
             className="bg-main text-white hover:bg-main-dark"
-            disabled={Boolean(hasPollEnded || poll.votedCandidate)}
+            disabled={Boolean(hasPollEnded || poll.votedCandidate || isSubmitting)}
           >
-            {hasPollEnded ? "Vote Submitted" : "Submit Vote"}
+            {poll.votedCandidate ? "Vote Submitted" : "Submit Vote"}
           </Button>
         </CardFooter>
       </form>
