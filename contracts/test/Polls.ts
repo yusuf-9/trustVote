@@ -119,6 +119,8 @@ describe("Polls", function () {
       const unregisteredVoterHash = hashEmail("unregistered@example.com");
       await expect(polls.vote(1, 1, unregisteredVoterHash)).to.be.revertedWith("Not a registered voter");
     });
+    
+
   });
 
   describe("Poll Queries", function () {
@@ -161,6 +163,45 @@ describe("Polls", function () {
       const voterPolls = await polls.getPollsByVoter(voterHashes[0]);
       expect(voterPolls.pollIds.length).to.equal(1);
       expect(voterPolls.names[0]).to.equal(fixture.pollName);
+      expect(voterPolls.hasVoted[0]).to.equal(false);
+
+      // case vote
+      await polls.vote(1, 1, voterHashes[0]);
+      const voterPollsAfterVote = await polls.getPollsByVoter(voterHashes[0]);
+      expect(voterPollsAfterVote.hasVoted[0]).to.equal(true);
+    });
+
+    it("Should return poll details by voter", async function () {
+      const fixture = await loadFixture(deployPollsFixture);
+      const { polls, voterHashes } = fixture;
+
+      // Create poll
+      await polls.createPoll(
+        fixture.creatorEmailHash,
+        fixture.pollName,
+        fixture.description,
+        fixture.startsAt,
+        fixture.endsAt,
+        fixture.candidates,
+        fixture.voterHashes
+      );
+
+      // Get poll details before voting
+      const pollBeforeVote = await polls.getPollByVoter(1, voterHashes[0]);
+      expect(pollBeforeVote.names[0]).to.equal(fixture.pollName);
+      expect(pollBeforeVote.descriptions[0]).to.equal(fixture.description);
+      expect(pollBeforeVote.startsAt[0]).to.equal(fixture.startsAt);
+      expect(pollBeforeVote.endsAt[0]).to.equal(fixture.endsAt);
+      expect(pollBeforeVote.hasVoted[0]).to.equal(false);
+      expect(pollBeforeVote.candidates[0]).to.deep.equal(fixture.candidates);
+      expect(pollBeforeVote.votedCandidateNames[0]).to.equal("");
+
+      // Vote and check updated details
+      await polls.vote(1, 1, voterHashes[0]);
+      
+      const pollAfterVote = await polls.getPollByVoter(1, voterHashes[0]);
+      expect(pollAfterVote.hasVoted[0]).to.equal(true);
+      expect(pollAfterVote.votedCandidateNames[0]).to.equal(fixture.candidates[0]);
     });
 
     it("Should return voter details", async function () {
@@ -182,7 +223,6 @@ describe("Polls", function () {
       await polls.vote(1, 1, voterHashes[0]);
 
       const voterDetails = await polls.getVoterDetails(1);
-      console.log({ voterDetails });
 
       // Check total voters matches registered voters
       expect(voterDetails.allVoters.length).to.equal(voterHashes.length);

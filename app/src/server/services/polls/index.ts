@@ -3,6 +3,7 @@ import { keccak256, toUtf8Bytes } from "ethers";
 import { sanitizeEmail } from "@/common/utils";
 export default class PollsService {
   static async registerPollVoterHashes(voterEmails: string[]): Promise<void> {
+    
     const voterHashes = voterEmails.map(email => {
       const sanitizedEmail = sanitizeEmail(email);
       const hash = keccak256(toUtf8Bytes(sanitizedEmail));
@@ -12,9 +13,24 @@ export default class PollsService {
       };
     });
 
-    await prisma.emailHash.createMany({
-      data: voterHashes,
+    // Filter out hashes that already exist
+    const existingHashes = await prisma.emailHash.findMany({
+      where: {
+        hash: { in: voterHashes.map(vh => vh.hash) }
+      },
+      select: {
+        hash: true
+      }
     });
+
+    const existingHashSet = new Set(existingHashes.map(eh => eh.hash));
+    const newVoterHashes = voterHashes.filter(vh => !existingHashSet.has(vh.hash));
+
+    if (newVoterHashes.length > 0) {
+      await prisma.emailHash.createMany({
+        data: newVoterHashes,
+      });
+    }
   }
 
   static async getVoterEmailsFromHashes(hashes: string[]): Promise<string[]> {

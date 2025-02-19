@@ -83,6 +83,50 @@
       "type": "function"
     },
     {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_pollId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "_voterEmailHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getPollByVoter",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "pollIds",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "string[]",
+          "name": "names",
+          "type": "string[]"
+        },
+        {
+          "internalType": "string[]",
+          "name": "descriptions",
+          "type": "string[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "startsAt",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "endsAt",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [],
       "name": "getPollCount",
       "outputs": [
@@ -197,6 +241,11 @@
           "internalType": "uint256[]",
           "name": "endsAt",
           "type": "uint256[]"
+        },
+        {
+          "internalType": "bool[]",
+          "name": "hasVoted",
+          "type": "bool[]"
         }
       ],
       "stateMutability": "view",
