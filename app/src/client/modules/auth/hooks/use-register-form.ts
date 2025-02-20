@@ -14,10 +14,10 @@ export default function useRegisterForm() {
   const router = useRouter();
   const { loading, error, handleRequest } = useRequestHandler();
 
-  const [name, setName] = useState("test");
-  const [email, setEmail] = useState("test@test.com");
-  const [password, setPassword] = useState("12345678");
-  const [confirmPassword, setConfirmPassword] = useState("12345678");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const [validationErrors, setValidationErrors] = useState<ValidationErrorsType>({});
 
