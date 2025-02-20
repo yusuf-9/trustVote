@@ -122,8 +122,8 @@ export default class AuthService {
     console.log("sending mail");
     await sendOutwardMail(
       userEmail,
-      "Account verification Code from PlotExpress",
-      `Your PlotExpress verification code is: ${otp}`
+      "Account verification Code from TrustVote",
+      `Your email verification code is: ${otp}`
     );
     console.log("mail sent");
   }
@@ -179,7 +179,7 @@ export default class AuthService {
       if (user.authProvider !== "LOCAL") {
         throw new CustomError(
           400,
-          "This email is associated with a social login account. Please user a local account."
+          "This email is associated with a social login account. Please use a local account."
         );
       }
 
@@ -294,6 +294,7 @@ export default class AuthService {
      * 4 - Generate a new OTP
      * 5 - Update the OTP in the database
      * 6 - Send the OTP to the user
+     * 
      */
     const user = await prisma.user.findUnique({
       where: { email },
@@ -358,9 +359,9 @@ export default class AuthService {
         }
 
         if (!user.verified) {
-          const otp = this.generateOtp();
-          await this.updateOtpInDb(otp, user.id);
-          await this.sendOtpMail(user.email, otp);
+          const otp = AuthService.generateOtp();
+          await AuthService.updateOtpInDb(otp, user.id);
+          await AuthService.sendOtpMail(user.email, otp);
           throw new Error(CREDENTIALS_LOGIN_ERRORS.UNVERIFIED_USER);
         }
 
