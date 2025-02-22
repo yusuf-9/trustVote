@@ -1,5 +1,4 @@
 import { time, loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
-import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 import { expect } from "chai";
 import hre from "hardhat";
 import { keccak256, toUtf8Bytes } from "ethers";
@@ -19,13 +18,16 @@ describe("Polls", function () {
     const Polls = await hre.ethers.getContractFactory("Polls");
     const polls = await Polls.deploy();
 
+    // Get current timestamp
+    const currentTime = Math.floor(Date.now() / 1000);
+    
     // Sample poll data
     const creatorEmail = "creator@example.com";
     const creatorEmailHash = hashEmail(creatorEmail);
     const pollName = "Test Poll";
     const description = "Test Description";
-    const startsAt = 1739145600; // Current time
-    const endsAt = 1740009600; // 1 hour from now
+    const startsAt = currentTime - 3600; // Start 1 hour ago
+    const endsAt = currentTime + 3600;   // End 1 hour from now
     const candidates = ["Candidate 1", "Candidate 2"];
     const voterEmails = ["voter1@example.com", "voter2@example.com"];
     const voterHashes = voterEmails.map(hashEmail);
@@ -161,7 +163,6 @@ describe("Polls", function () {
       );
 
       const voterPolls = await polls.getPollsByVoter(voterHashes[0]);
-      console.log({ voterPolls });
 
       expect(voterPolls.pollIds.length).to.equal(1);
       expect(voterPolls.names[0]).to.equal(fixture.pollName);
@@ -259,6 +260,39 @@ describe("Polls", function () {
       // Check second voter is marked as not voted
       expect(voterDetails.allVoters[1]).to.equal(voterHashes[1]); 
       expect(voterDetails.hasVoted[1]).to.equal(0);
+    });
+  });
+
+  describe("Poll Results", function () {
+    it("Should return poll results", async function () {
+      const fixture = await loadFixture(deployPollsFixture);
+      const { polls } = fixture;
+
+      const currentTime = await time.latest();
+      const pollStartTime = currentTime;
+      const pollEndTime = currentTime + 5000;
+
+      // Create poll with explicit times
+      await polls.createPoll(
+        fixture.creatorEmailHash,
+        fixture.pollName,
+        fixture.description,
+        pollStartTime,
+        pollEndTime,
+        fixture.candidates,
+        fixture.voterHashes
+      );
+
+      // Vote
+      await polls.vote(1, 1, fixture.voterHashes[0]);
+
+      // Increase blockchain time to after poll end
+      await time.increaseTo(pollEndTime + 1);
+
+      // Get results
+      const results = await polls.getPollResults(1);
+      expect(results.candidateNames).to.deep.equal(fixture.candidates);
+      expect((results.voteCounts).map(result => Number(result))).to.deep.equal([1, 0]);
     });
   });
 });

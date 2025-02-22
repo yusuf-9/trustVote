@@ -96,8 +96,8 @@ export default function useCreatePoll() {
       const contract = await getPollContract();
 
       // Convert dates to Unix timestamps
-      const startsAt = values.startDate.getTime();
-      const endsAt = values.endDate.getTime();
+      const startsAt = values.startDate.getTime() / 1000;
+      const endsAt = values.endDate.getTime() / 1000;
 
       // Hash creator email (you'll need to get this from your auth system)
       const creatorEmail = sanitizeEmail(userInfo.email); // Replace with actual user email

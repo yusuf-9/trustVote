@@ -75,11 +75,11 @@ contract Polls {
 
         Poll storage poll = polls[_pollId];
 
-        // require(
-        //     (block.timestamp >= poll.startsAt &&
-        //         block.timestamp <= poll.endsAt),
-        //     "Poll not active"
-        // );
+        require(
+            block.timestamp >= poll.startsAt &&
+            block.timestamp <= poll.endsAt,
+            "Poll not active"
+        );
         require(!poll.hasVoted[_emailHash], "Already voted");
 
         // Check if voter is registered
@@ -242,6 +242,7 @@ contract Polls {
     function getPollCount() public view returns (uint256) {
         return pollCount;
     }
+
     function getPollsByVoter(
         bytes32 _voterEmailHash
     )
@@ -347,10 +348,17 @@ contract Polls {
                 if (polls[i].registeredVoterEmailHashes[j] == _voterEmailHash) {
                     // Get the candidate that the voter has voted for
                     if (polls[i].hasVoted[_voterEmailHash]) {
-                        uint256 votedCandidateId = polls[i].voterChoices[_voterEmailHash];
+                        uint256 votedCandidateId = polls[i].voterChoices[
+                            _voterEmailHash
+                        ];
                         // Check if votedCandidateId is valid before accessing
-                        if (votedCandidateId > 0 && votedCandidateId <= polls[i].candidateCount) {
-                            votedCandidates[index] = polls[i].candidates[votedCandidateId].name;
+                        if (
+                            votedCandidateId > 0 &&
+                            votedCandidateId <= polls[i].candidateCount
+                        ) {
+                            votedCandidates[index] = polls[i]
+                                .candidates[votedCandidateId]
+                                .name;
                         } else {
                             votedCandidates[index] = ""; // Invalid candidate ID
                         }
@@ -428,5 +436,31 @@ contract Polls {
             candidates,
             votedCandidateName
         );
+    }
+
+    function getPollResults(
+        uint256 _pollId
+    )
+        public
+        view
+        returns (string[] memory candidateNames, uint256[] memory voteCounts)
+    {
+        require(_pollId > 0 && _pollId <= pollCount, "Invalid poll ID");
+
+        Poll storage poll = polls[_pollId];
+
+        // check that the poll has ended
+        require(block.timestamp > poll.endsAt, "Poll is still active");
+
+        uint256 candidateCount = poll.candidateCount;
+        candidateNames = new string[](candidateCount);
+        voteCounts = new uint256[](candidateCount);
+
+        for (uint256 i = 1; i <= candidateCount; i++) {
+            candidateNames[i - 1] = poll.candidates[i].name;
+            voteCounts[i - 1] = poll.candidates[i].voteCount;
+        }
+
+        return (candidateNames, voteCounts);
     }
 }

@@ -34,8 +34,8 @@ const useCreatorPolls = (userEmail: string | null) => {
           id: pollIds[index].toString(),
           title: names[index],
           description: descriptions[index],
-          startTime: Number(startsAt[index]),
-          endTime: Number(endsAt[index]),
+          startTime: Number(startsAt[index]) * 1000,
+          endTime: Number(endsAt[index]) * 1000,
           totalVoters: Number(totalVoters[index]),
           totalVotes: Number(totalVotes[index]),
         }))
