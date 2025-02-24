@@ -92,7 +92,7 @@ export default function CreatePollForm() {
                         variant={"outline"}
                         className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}
                       >
-                        {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                        {field.value ? format(field.value, "PPP HH:mm") : <span>Pick a date and time</span>}
                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                       </Button>
                     </FormControl>
@@ -101,12 +101,27 @@ export default function CreatePollForm() {
                     className="w-auto p-0"
                     align="start"
                   >
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      initialFocus
-                    />
+                    <div className="p-4">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        initialFocus
+                      />
+                      <div className="mt-4">
+                        <Input
+                          type="time"
+                          step="60"
+                          value={field.value ? format(field.value, "HH:mm") : ""}
+                          onChange={(e) => {
+                            const [hours, minutes] = e.target.value.split(':');
+                            const newDate = new Date(field.value || new Date());
+                            newDate.setHours(parseInt(hours), parseInt(minutes));
+                            field.onChange(newDate);
+                          }}
+                        />
+                      </div>
+                    </div>
                   </PopoverContent>
                 </Popover>
                 <FormMessage />
@@ -127,7 +142,7 @@ export default function CreatePollForm() {
                         variant={"outline"}
                         className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}
                       >
-                        {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                        {field.value ? format(field.value, "PPP HH:mm") : <span>Pick a date and time</span>}
                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                       </Button>
                     </FormControl>
@@ -136,13 +151,27 @@ export default function CreatePollForm() {
                     className="w-auto p-0"
                     align="start"
                   >
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      disabled={date => date < new Date()}
-                      initialFocus
-                    />
+                    <div className="p-4">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        initialFocus
+                      />
+                      <div className="mt-4">
+                        <Input
+                          type="time"
+                          step="60"
+                          value={field.value ? format(field.value, "HH:mm") : ""}
+                          onChange={(e) => {
+                            const [hours, minutes] = e.target.value.split(':');
+                            const newDate = new Date(field.value || new Date());
+                            newDate.setHours(parseInt(hours), parseInt(minutes));
+                            field.onChange(newDate);
+                          }}
+                        />
+                      </div>
+                    </div>
                   </PopoverContent>
                 </Popover>
                 <FormMessage />

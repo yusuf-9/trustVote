@@ -22,7 +22,7 @@ export const ROUTES = {
     },
     POLL_RESULTS: "/polls/results",
     POLL_RESULT: { 
-        STATIC: "/poll/:id/results",
-        DYNAMIC: (id: string | number) => `/poll/${id}/results`,
+        STATIC: "/polls/:id/results",
+        DYNAMIC: (id: string | number) => `/polls/${id}/results`,
     },
 }

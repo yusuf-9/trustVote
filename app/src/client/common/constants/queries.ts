@@ -6,4 +6,5 @@ export const QUERIES = {
   POLL_DETAILS_FOR_VOTER: "poll-details-for-voter",
   USER_POLLS: "user-polls",
   VOTER_DETAILS: "voter-details",
+  POLL_RESULTS: "poll-results",
 };

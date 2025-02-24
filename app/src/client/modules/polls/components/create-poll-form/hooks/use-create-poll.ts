@@ -23,9 +23,6 @@ const formSchema = z
     endDate: z
       .date({
         required_error: "End date is required",
-      })
-      .refine(date => date > new Date(), {
-        message: "End date must be in the future",
       }),
     candidates: z
       .array(

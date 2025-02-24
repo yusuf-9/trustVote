@@ -183,3 +183,34 @@ export async function fetchUserPolls(userEmail: string) {
     throw error;
   }
 }
+
+export async function fetchPollResultsByUser(pollId: number, userEmail: string) {
+  try {
+    const contract = await getPollContract();
+
+    // Hash the email
+    const emailHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(userEmail));
+
+    // Fetch poll results from the smart contract
+    const pollResults: {
+      name: string;
+      description: string;
+      startsAt: string;
+      endsAt: string;
+      candidates: string[];
+      candidateVotes: string[];
+      totalVoters: string;
+      totalVotes: string;
+      isCreator: boolean;
+      isVoter: boolean;
+      votedCandidate: string;
+    } = await contract?.getPollResultsByUser(pollId, emailHash);
+
+    console.log({pollResults});
+
+    return pollResults;
+  } catch (error) {
+    console.error("Error fetching poll results by user:", error);
+    throw error;
+  }
+}

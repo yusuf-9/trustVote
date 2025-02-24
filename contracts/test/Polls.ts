@@ -352,5 +352,73 @@ describe("Polls", function () {
       expect(results.candidateNames).to.deep.equal(fixture.candidates);
       expect((results.voteCounts).map(result => Number(result))).to.deep.equal([1, 0]);
     });
+
+    it("Should return poll results by user correctly", async function () {
+        const fixture = await loadFixture(deployPollsFixture);
+        const { polls, creatorEmailHash, voterHashes } = fixture;
+
+        const currentTime = await time.latest();
+        const pollStartTime = currentTime;
+        const pollEndTime = currentTime + 5000;
+
+        // Create poll
+        await polls.createPoll(
+            creatorEmailHash,
+            fixture.pollName,
+            fixture.description,
+            pollStartTime,
+            pollEndTime,
+            fixture.candidates,
+            fixture.voterHashes
+        );
+
+        // Have first voter vote
+        await polls.vote(1, 1, voterHashes[0]);
+
+        // Try to get results before poll ends (should fail)
+        await expect(
+            polls.getPollResultsByUser(1, creatorEmailHash)
+        ).to.be.revertedWith("Poll is still active");
+
+        // Increase time to end the poll
+        await time.increaseTo(pollEndTime + 1);
+
+        // Test results for creator
+        const creatorResults = await polls.getPollResultsByUser(1, creatorEmailHash);
+        expect(creatorResults.name).to.equal(fixture.pollName);
+        expect(creatorResults.description).to.equal(fixture.description);
+        expect(creatorResults.startsAt).to.equal(pollStartTime);
+        expect(creatorResults.endsAt).to.equal(pollEndTime);
+        expect(creatorResults.candidates).to.deep.equal(fixture.candidates);
+        expect(creatorResults.candidateVotes.map(v => Number(v))).to.deep.equal([1, 0]);
+        expect(creatorResults.totalVoters).to.equal(2); // from fixture.voterHashes.length
+        expect(creatorResults.totalVotes).to.equal(1);
+        expect(creatorResults.isCreator).to.equal(true);
+        expect(creatorResults.isVoter).to.equal(false);
+        expect(creatorResults.votedCandidate).to.equal("");
+
+        // Test results for voter who voted
+        const votedVoterResults = await polls.getPollResultsByUser(1, voterHashes[0]);
+        expect(votedVoterResults.isCreator).to.equal(false);
+        expect(votedVoterResults.isVoter).to.equal(true);
+        expect(votedVoterResults.votedCandidate).to.equal(fixture.candidates[0]);
+
+        // Test results for voter who didn't vote
+        const unvotedVoterResults = await polls.getPollResultsByUser(1, voterHashes[1]);
+        expect(unvotedVoterResults.isCreator).to.equal(false);
+        expect(unvotedVoterResults.isVoter).to.equal(true);
+        expect(unvotedVoterResults.votedCandidate).to.equal("");
+
+        // Test invalid poll ID
+        await expect(
+            polls.getPollResultsByUser(999, creatorEmailHash)
+        ).to.be.revertedWith("Invalid poll ID");
+
+        // Test unregistered user
+        const unregisteredHash = hashEmail("unregistered@example.com");
+        await expect(
+            polls.getPollResultsByUser(1, unregisteredHash)
+        ).to.be.revertedWith("User is not a creator or registered voter");
+    });
   });
 });

@@ -176,6 +176,80 @@
     {
       "inputs": [
         {
+          "internalType": "uint256",
+          "name": "_pollId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "_emailHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getPollResultsByUser",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "startsAt",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "endsAt",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string[]",
+          "name": "candidates",
+          "type": "string[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "candidateVotes",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "uint256",
+          "name": "totalVoters",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "totalVotes",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "isCreator",
+          "type": "bool"
+        },
+        {
+          "internalType": "bool",
+          "name": "isVoter",
+          "type": "bool"
+        },
+        {
+          "internalType": "string",
+          "name": "votedCandidate",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "bytes32",
           "name": "_creatorEmailHash",
           "type": "bytes32"
