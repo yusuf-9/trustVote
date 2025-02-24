@@ -22,14 +22,14 @@ describe("Polls", function () {
     const currentTime = Math.floor(Date.now() / 1000);
     
     // Sample poll data
-    const creatorEmail = "creator@example.com";
+    const creatorEmail = "yusufahmed195@gmail.com";
     const creatorEmailHash = hashEmail(creatorEmail);
     const pollName = "Test Poll";
     const description = "Test Description";
     const startsAt = currentTime - 3600; // Start 1 hour ago
     const endsAt = currentTime + 3600;   // End 1 hour from now
     const candidates = ["Candidate 1", "Candidate 2"];
-    const voterEmails = ["voter1@example.com", "voter2@example.com"];
+    const voterEmails = ["yusufahmedzia195@gmail.com", "voter2@example.com"];
     const voterHashes = voterEmails.map(hashEmail);
 
     return {
@@ -260,6 +260,64 @@ describe("Polls", function () {
       // Check second voter is marked as not voted
       expect(voterDetails.allVoters[1]).to.equal(voterHashes[1]); 
       expect(voterDetails.hasVoted[1]).to.equal(0);
+    });
+
+    it("Should return user polls", async function () {
+      const fixture = await loadFixture(deployPollsFixture);
+      const { polls, voterHashes, creatorEmailHash } = fixture;
+
+      // Create first poll
+      await polls.createPoll(
+        creatorEmailHash,
+        fixture.pollName,
+        fixture.description,
+        fixture.startsAt,
+        fixture.endsAt,
+        fixture.candidates,
+        fixture.voterHashes
+      );
+
+      // Create second poll with same creator
+      await polls.createPoll(
+        creatorEmailHash,
+        "Second Poll",
+        "Another description",
+        fixture.startsAt,
+        fixture.endsAt,
+        fixture.candidates,
+        fixture.voterHashes
+      );
+
+      // Have first voter vote on first poll
+      await polls.vote(1, 1, voterHashes[0]);
+
+      // Get user polls for creator
+      const creatorPolls = await polls.getUserPolls(creatorEmailHash);
+      
+      // Creator should see both polls
+      expect(creatorPolls.pollIds.map(id => Number(id))).to.deep.equal([1, 2]);
+      expect(creatorPolls.names).to.deep.equal([fixture.pollName, "Second Poll"]);
+      expect(creatorPolls.descriptions).to.deep.equal([fixture.description, "Another description"]);
+      expect(creatorPolls.isCreator).to.deep.equal([true, true]);
+      expect(creatorPolls.hasVoted).to.deep.equal([false, false]);
+
+      // Voted voter should see both polls (they're registered in both)
+      const votedVoterPolls = await polls.getUserPolls(voterHashes[0]);
+
+      expect(votedVoterPolls.pollIds.map(id => Number(id))).to.deep.equal([1, 2]);
+      expect(votedVoterPolls.names).to.deep.equal([fixture.pollName, "Second Poll"]);
+      expect(votedVoterPolls.descriptions).to.deep.equal([fixture.description, "Another description"]);
+      expect(votedVoterPolls.isCreator).to.deep.equal([false, false]);
+      expect(votedVoterPolls.hasVoted).to.deep.equal([true, false]); // Voted in poll 1, not in poll 2
+
+      // Unvoted voter should also see both polls (they're registered in both)
+      const unvotedVoterPolls = await polls.getUserPolls(voterHashes[1]);
+
+      expect(unvotedVoterPolls.pollIds.map(id => Number(id))).to.deep.equal([1, 2]);
+      expect(unvotedVoterPolls.names).to.deep.equal([fixture.pollName, "Second Poll"]);
+      expect(unvotedVoterPolls.descriptions).to.deep.equal([fixture.description, "Another description"]);
+      expect(unvotedVoterPolls.isCreator).to.deep.equal([false, false]);
+      expect(unvotedVoterPolls.hasVoted).to.deep.equal([false, false]); // Not voted in either poll
     });
   });
 

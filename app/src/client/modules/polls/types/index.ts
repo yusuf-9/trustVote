@@ -29,3 +29,13 @@ export type VoterPollDetails = {
   candidates: string[];
   votedCandidate: string;
 };
+
+export type UserPoll = {
+  id: string;
+  title: string;
+  description: string;
+  startTime: number;
+  endTime: number;
+  hasVoted: boolean;
+  isCreator: boolean;
+}

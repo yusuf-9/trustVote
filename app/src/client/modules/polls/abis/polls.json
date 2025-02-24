@@ -294,6 +294,55 @@
       "inputs": [
         {
           "internalType": "bytes32",
+          "name": "_emailHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getUserPolls",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "pollIds",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "string[]",
+          "name": "names",
+          "type": "string[]"
+        },
+        {
+          "internalType": "string[]",
+          "name": "descriptions",
+          "type": "string[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "startTimes",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "endTimes",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "bool[]",
+          "name": "isCreator",
+          "type": "bool[]"
+        },
+        {
+          "internalType": "bool[]",
+          "name": "hasVoted",
+          "type": "bool[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
           "name": "_voterEmailHash",
           "type": "bytes32"
         }

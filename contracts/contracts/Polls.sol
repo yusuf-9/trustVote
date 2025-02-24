@@ -62,6 +62,8 @@ contract Polls {
         // Store registered voters in mapping, starting from index 1
         for (uint256 i = 0; i < _voterHashes.length; i++) {
             newPoll.registeredVoterEmailHashes[i + 1] = _voterHashes[i];
+            // Initialize voter as not having voted in same loop
+            newPoll.hasVoted[_voterHashes[i]] = false;
         }
         newPoll.voterCount = _voterHashes.length;
     }
@@ -462,5 +464,80 @@ contract Polls {
         }
 
         return (candidateNames, voteCounts);
+    }
+
+    function getUserPolls(
+        bytes32 _emailHash
+    )
+        public
+        view
+        returns (
+            uint256[] memory pollIds,
+            string[] memory names,
+            string[] memory descriptions, 
+            uint256[] memory startTimes,
+            uint256[] memory endTimes,
+            bool[] memory isCreator,
+            bool[] memory hasVoted
+        )
+    {
+        // First count how many polls this user is involved with
+        uint256 relevantPollCount = 0;
+        for (uint256 i = 1; i <= pollCount; i++) {
+            Poll storage poll = polls[i];
+            bool isRegistered = false;
+            for (uint256 j = 1; j <= poll.voterCount; j++) {
+                if (poll.registeredVoterEmailHashes[j] == _emailHash) {
+                    isRegistered = true;
+                    break;
+                }
+            }
+            if (poll.creatorEmailHash == _emailHash || isRegistered) {
+                relevantPollCount++;
+            }
+        }
+
+        // Initialize arrays with the counted length
+        pollIds = new uint256[](relevantPollCount);
+        names = new string[](relevantPollCount);
+        descriptions = new string[](relevantPollCount);
+        startTimes = new uint256[](relevantPollCount);
+        endTimes = new uint256[](relevantPollCount);
+        isCreator = new bool[](relevantPollCount);
+        hasVoted = new bool[](relevantPollCount);
+
+        // Fill arrays with poll data
+        uint256 arrayIndex = 0;
+        for (uint256 i = 1; i <= pollCount; i++) {
+            Poll storage poll = polls[i];
+            bool isRegistered = false;
+            for (uint256 j = 1; j <= poll.voterCount; j++) {
+                if (poll.registeredVoterEmailHashes[j] == _emailHash) {
+                    isRegistered = true;
+                    break;
+                }
+            }
+            if (poll.creatorEmailHash == _emailHash || isRegistered) {
+                pollIds[arrayIndex] = i;
+                names[arrayIndex] = poll.name;
+                descriptions[arrayIndex] = poll.description;
+                startTimes[arrayIndex] = poll.startsAt;
+                endTimes[arrayIndex] = poll.endsAt;
+                isCreator[arrayIndex] = (poll.creatorEmailHash == _emailHash);
+                hasVoted[arrayIndex] = poll.hasVoted[_emailHash];
+                
+                arrayIndex++;
+            }
+        }
+
+        return (
+            pollIds,
+            names,
+            descriptions,
+            startTimes,
+            endTimes,
+            isCreator,
+            hasVoted
+        );
     }
 }

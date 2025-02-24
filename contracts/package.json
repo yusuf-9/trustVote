@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy-local": "hardhat ignition deploy ./ignition/modules/Polls.ts --network localhost"
+    "deploy-local": "hardhat ignition deploy ./ignition/modules/Polls.ts --network localhost",
+    "deploy-ganache": "hardhat ignition deploy ./ignition/modules/Polls.ts --network ganache"
   },
   "keywords": [],
   "author": "",

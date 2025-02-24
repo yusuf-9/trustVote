@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { BarChart3, Vote, PlusCircle } from "lucide-react";
+import { BarChart3, Vote, PlusCircle, FileStack } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/client/common/utils";
 import { Button } from "@/client/common/components/ui/button";
@@ -16,8 +16,9 @@ interface SidebarLink {
 }
 
 const sidebarLinks: SidebarLink[] = [
-  { icon: BarChart3, label: "Polls", href: ROUTES.POLLS },
+  { icon: FileStack, label: "Created Polls", href: ROUTES.POLLS },
   { icon: Vote, label: "Cast Votes", href: ROUTES.VOTER_POLLS },
+  { icon: BarChart3, label: "Poll Results", href: ROUTES.POLL_RESULTS },
   { icon: PlusCircle, label: "Create Poll", href: ROUTES.CREATE_POLL },
 ];
 
