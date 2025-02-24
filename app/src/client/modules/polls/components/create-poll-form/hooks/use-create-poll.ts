@@ -23,9 +23,6 @@ const formSchema = z
     endDate: z
       .date({
         required_error: "End date is required",
-      })
-      .refine(date => date > new Date(), {
-        message: "End date must be in the future",
       }),
     candidates: z
       .array(
@@ -96,8 +93,8 @@ export default function useCreatePoll() {
       const contract = await getPollContract();
 
       // Convert dates to Unix timestamps
-      const startsAt = values.startDate.getTime();
-      const endsAt = values.endDate.getTime();
+      const startsAt = values.startDate.getTime() / 1000;
+      const endsAt = values.endDate.getTime() / 1000;
 
       // Hash creator email (you'll need to get this from your auth system)
       const creatorEmail = sanitizeEmail(userInfo.email); // Replace with actual user email

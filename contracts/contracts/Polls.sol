@@ -62,6 +62,8 @@ contract Polls {
         // Store registered voters in mapping, starting from index 1
         for (uint256 i = 0; i < _voterHashes.length; i++) {
             newPoll.registeredVoterEmailHashes[i + 1] = _voterHashes[i];
+            // Initialize voter as not having voted in same loop
+            newPoll.hasVoted[_voterHashes[i]] = false;
         }
         newPoll.voterCount = _voterHashes.length;
     }
@@ -75,11 +77,10 @@ contract Polls {
 
         Poll storage poll = polls[_pollId];
 
-        // require(
-        //     (block.timestamp >= poll.startsAt &&
-        //         block.timestamp <= poll.endsAt),
-        //     "Poll not active"
-        // );
+        require(
+            block.timestamp >= poll.startsAt && block.timestamp <= poll.endsAt,
+            "Poll not active"
+        );
         require(!poll.hasVoted[_emailHash], "Already voted");
 
         // Check if voter is registered
@@ -242,6 +243,7 @@ contract Polls {
     function getPollCount() public view returns (uint256) {
         return pollCount;
     }
+
     function getPollsByVoter(
         bytes32 _voterEmailHash
     )
@@ -347,10 +349,17 @@ contract Polls {
                 if (polls[i].registeredVoterEmailHashes[j] == _voterEmailHash) {
                     // Get the candidate that the voter has voted for
                     if (polls[i].hasVoted[_voterEmailHash]) {
-                        uint256 votedCandidateId = polls[i].voterChoices[_voterEmailHash];
+                        uint256 votedCandidateId = polls[i].voterChoices[
+                            _voterEmailHash
+                        ];
                         // Check if votedCandidateId is valid before accessing
-                        if (votedCandidateId > 0 && votedCandidateId <= polls[i].candidateCount) {
-                            votedCandidates[index] = polls[i].candidates[votedCandidateId].name;
+                        if (
+                            votedCandidateId > 0 &&
+                            votedCandidateId <= polls[i].candidateCount
+                        ) {
+                            votedCandidates[index] = polls[i]
+                                .candidates[votedCandidateId]
+                                .name;
                         } else {
                             votedCandidates[index] = ""; // Invalid candidate ID
                         }
@@ -427,6 +436,189 @@ contract Polls {
             hasVoted,
             candidates,
             votedCandidateName
+        );
+    }
+
+    function getPollResults(
+        uint256 _pollId
+    )
+        public
+        view
+        returns (string[] memory candidateNames, uint256[] memory voteCounts)
+    {
+        require(_pollId > 0 && _pollId <= pollCount, "Invalid poll ID");
+
+        Poll storage poll = polls[_pollId];
+
+        // check that the poll has ended
+        require(block.timestamp > poll.endsAt, "Poll is still active");
+
+        uint256 candidateCount = poll.candidateCount;
+        candidateNames = new string[](candidateCount);
+        voteCounts = new uint256[](candidateCount);
+
+        for (uint256 i = 1; i <= candidateCount; i++) {
+            candidateNames[i - 1] = poll.candidates[i].name;
+            voteCounts[i - 1] = poll.candidates[i].voteCount;
+        }
+
+        return (candidateNames, voteCounts);
+    }
+
+    function getUserPolls(
+        bytes32 _emailHash
+    )
+        public
+        view
+        returns (
+            uint256[] memory pollIds,
+            string[] memory names,
+            string[] memory descriptions,
+            uint256[] memory startTimes,
+            uint256[] memory endTimes,
+            bool[] memory isCreator,
+            bool[] memory hasVoted
+        )
+    {
+        // First count how many polls this user is involved with
+        uint256 relevantPollCount = 0;
+        for (uint256 i = 1; i <= pollCount; i++) {
+            Poll storage poll = polls[i];
+            bool isRegistered = false;
+            for (uint256 j = 1; j <= poll.voterCount; j++) {
+                if (poll.registeredVoterEmailHashes[j] == _emailHash) {
+                    isRegistered = true;
+                    break;
+                }
+            }
+            if (poll.creatorEmailHash == _emailHash || isRegistered) {
+                relevantPollCount++;
+            }
+        }
+
+        // Initialize arrays with the counted length
+        pollIds = new uint256[](relevantPollCount);
+        names = new string[](relevantPollCount);
+        descriptions = new string[](relevantPollCount);
+        startTimes = new uint256[](relevantPollCount);
+        endTimes = new uint256[](relevantPollCount);
+        isCreator = new bool[](relevantPollCount);
+        hasVoted = new bool[](relevantPollCount);
+
+        // Fill arrays with poll data
+        uint256 arrayIndex = 0;
+        for (uint256 i = 1; i <= pollCount; i++) {
+            Poll storage poll = polls[i];
+            bool isRegistered = false;
+            for (uint256 j = 1; j <= poll.voterCount; j++) {
+                if (poll.registeredVoterEmailHashes[j] == _emailHash) {
+                    isRegistered = true;
+                    break;
+                }
+            }
+            if (poll.creatorEmailHash == _emailHash || isRegistered) {
+                pollIds[arrayIndex] = i;
+                names[arrayIndex] = poll.name;
+                descriptions[arrayIndex] = poll.description;
+                startTimes[arrayIndex] = poll.startsAt;
+                endTimes[arrayIndex] = poll.endsAt;
+                isCreator[arrayIndex] = (poll.creatorEmailHash == _emailHash);
+                hasVoted[arrayIndex] = poll.hasVoted[_emailHash];
+
+                arrayIndex++;
+            }
+        }
+
+        return (
+            pollIds,
+            names,
+            descriptions,
+            startTimes,
+            endTimes,
+            isCreator,
+            hasVoted
+        );
+    }
+
+    function getPollResultsByUser(
+        uint256 _pollId,
+        bytes32 _emailHash
+    )
+        public
+        view
+        returns (
+            string memory name,
+            string memory description,
+            uint256 startsAt,
+            uint256 endsAt,
+            string[] memory candidates,
+            uint256[] memory candidateVotes,
+            uint256 totalVoters,
+            uint256 totalVotes,
+            bool isCreator,
+            bool isVoter,
+            string memory votedCandidate
+        )
+    {
+        Poll storage poll = polls[_pollId];
+
+        require(_pollId > 0 && _pollId <= pollCount, "Invalid poll ID");
+        // require(block.timestamp > poll.endsAt, "Poll is still active");
+        bool isRegistered = false;
+        for (uint256 j = 1; j <= poll.voterCount; j++) {
+            if (poll.registeredVoterEmailHashes[j] == _emailHash) {
+                isRegistered = true;
+                break;
+            }
+        }
+        require(
+            poll.creatorEmailHash == _emailHash || isRegistered,
+            "User is not a creator or registered voter"
+        );
+
+        name = poll.name;
+        description = poll.description;
+        startsAt = poll.startsAt;
+        endsAt = poll.endsAt;
+        candidates = new string[](poll.candidateCount);
+        for (uint256 i = 1; i <= poll.candidateCount; i++) {
+            candidates[i - 1] = poll.candidates[i].name;
+        }
+        candidateVotes = new uint256[](poll.candidateCount);
+        for (uint256 i = 1; i <= poll.candidateCount; i++) {
+            candidateVotes[i - 1] = poll.candidates[i].voteCount;
+        }
+        totalVoters = poll.voterCount;
+        totalVotes = poll.totalVotes;
+        isCreator = (poll.creatorEmailHash == _emailHash);
+
+        // Check if user is registered voter
+        isVoter = false;
+        for (uint256 i = 1; i <= poll.voterCount; i++) {
+            if (poll.registeredVoterEmailHashes[i] == _emailHash) {
+                isVoter = true;
+                break;
+            }
+        }
+
+        // Get the candidate the user voted for
+        votedCandidate = "";
+        if (poll.hasVoted[_emailHash]) {
+            votedCandidate = poll.candidates[poll.voterChoices[_emailHash]].name;
+        }   
+
+        return (
+            name,
+            description,
+            startsAt,
+            endsAt,
+            candidates,
+            candidateVotes,
+            totalVoters,
+            totalVotes,
+            isCreator,
+            isVoter,
+            votedCandidate
         );
     }
 }

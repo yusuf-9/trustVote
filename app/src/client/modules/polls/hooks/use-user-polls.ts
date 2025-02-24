@@ -1,34 +1,35 @@
 import { QUERIES } from "@/client/common/constants/queries";
 import { useQuery } from "@tanstack/react-query";
-import { fetchPollsAvailableForVote, fetchVotedCandidatesByVoter } from "../api";
-import { VoterPoll } from "../types";
+import { fetchUserPolls } from "../api";
+import { UserPoll } from "../types";
 
-const useVoterPolls = (userEmail: string | null) => {
+const useUserPolls = (userEmail: string | null) => {
   const {
     data: polls,
     isLoading,
     error,
   } = useQuery({
-    queryKey: [QUERIES.POLLS_AVAILABLE_FOR_VOTE, userEmail],
+    queryKey: [QUERIES.USER_POLLS, userEmail],
     queryFn: async () => {
       if (!userEmail) return [];
 
-      const pollData = await fetchPollsAvailableForVote(userEmail);
+      const pollData = await fetchUserPolls(userEmail);
       if (!pollData) return [];
-
-      const votedCandidates = await fetchVotedCandidatesByVoter(userEmail);
-      if (!votedCandidates) return [];
 
       const pollIds = pollData.pollIds; // Array of poll IDs
       const names = pollData.names; // Array of poll names
       const descriptions = pollData.descriptions; // Array of poll descriptions
-      const startsAt = pollData.startsAt; // Array of start times
-      const endsAt = pollData.endsAt; // Array of end times
+      const startsAt = pollData.startTimes; // Array of start times
+      const endsAt = pollData.endTimes; // Array of end times
       const hasVoted = pollData.hasVoted; // Array of hasVoted
-      const candidates = pollData.candidates; // Array of candidates
+      const isCreator = pollData.isCreator; // Array of isCreator
+
+      console.log({
+        names
+      })
       
       // Map values correctly
-      const formattedPolls: VoterPoll[] = pollIds
+      const formattedPolls: UserPoll[] = pollIds
         .map((_: any, index: number) => ({
           id: pollIds[index].toString(),
           title: names[index],
@@ -36,8 +37,7 @@ const useVoterPolls = (userEmail: string | null) => {
           startTime: Number(startsAt[index]) * 1000,
           endTime: Number(endsAt[index]) * 1000,
           hasVoted: hasVoted[index],
-          candidates: candidates[index].split("+_)(*&^%$#@!").filter((candidate: string) => candidate !== ""),
-          votedCandidate: votedCandidates[index],
+          isCreator: isCreator[index],
         }))
         .sort((a, b) => Number(b.id) - Number(a.id));
 
@@ -51,4 +51,4 @@ const useVoterPolls = (userEmail: string | null) => {
   return { polls, isLoading, error };
 };
 
-export default useVoterPolls;
+export default useUserPolls;
