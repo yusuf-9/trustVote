@@ -3,7 +3,6 @@ import { useForm, useFieldArray } from "react-hook-form";
 import * as z from "zod";
 import { getPollContract } from "@/client/modules/polls/utils";
 import { ethers } from "ethers";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "@/client/common/hooks/use-toast";
 import useUserInfo from "@/client/modules/auth/hooks/use-user-info";
@@ -30,7 +29,7 @@ const formSchema = z
           name: z.string().min(1, "Candidate name is required"),
         })
       )
-      .min(2, "At least two candidates are required"),
+      .min(1, "At least one candidate is required"),
     voters: z
       .array(
         z.object({
@@ -54,12 +53,12 @@ export default function useCreatePoll() {
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "Sample Poll",
-      description: "This is a sample poll description that meets the minimum length requirement.",
-      startDate: new Date(),
-      endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 1 week from now
-      candidates: [{ name: "Candidate 1" }, { name: "Candidate 2" }, { name: "Candidate 3" }],
-      voters: [{ email: "voter1@example.com" }, { email: "voter2@example.com" }, { email: "voter3@example.com" }],
+      title: "",
+      description: "",
+      startDate: undefined,
+      endDate: undefined,
+      candidates: [],
+      voters: [],
     },
   });
 
@@ -105,6 +104,7 @@ export default function useCreatePoll() {
 
       // Hash voter emails
       const voterHashes = values.voters.map(v => ethers.utils.keccak256(ethers.utils.toUtf8Bytes(sanitizeEmail(v.email))));
+
 
       // Create poll
       const tx = await contract.createPoll(
